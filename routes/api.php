@@ -557,3 +557,13 @@ Route::prefix('notifications')->group(function () {
 
     Route::get('payments', [NotificationController::class, 'getPaymentNotifications']);
 });
+
+
+Route::get('/accessories', [AccessoryController::class, 'index']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/dashboard', [AuthController::class, 'dashboard']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});

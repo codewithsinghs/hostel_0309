@@ -345,3 +345,28 @@ Route::get('/admin/fine', [FineController::class, 'showFineAssignmentForm'])->na
 Route::post('/paytm/callback', [PaytmController::class, 'callback'])->name('paytm.callback');
 // routes/api.php
 Route::view('/payment/status', 'guest.payment_status')->name('guest.payment_status');
+
+
+
+// Updated
+// ✅ Default Home Route
+Route::get('/', function () {return view('frontend.index');})->name('index');
+Route::get('/guest/register', fn() => view('frontend.pages.guest.register'))->name('guest.register');
+
+
+// Route::get('/{any}', function () {
+//     return view('app'); // your Blade layout that mounts Vue
+// })->where('any', '.*');
+
+// Vue Updated
+Route::get('/', function () {return view('frontend.app');})->name('home');
+Route::get('/accessories', fn() => view('frontend.vue.pages.accessories'))->name('guest.accessories');
+Route::get('/guest/register', fn() => view('frontend.vue.guest.register'))->name('guest.register');
+
+Route::get('/register', function () {return view('frontend.vue.auth.register');})->name('register');
+Route::get('/login', function () {return view('frontend.vue.auth.login');})->name('login');
+
+// Vue SPA pages (catch-all)
+// Route::get('/{any}', function () {
+//     return view('app'); // Vue entry point (resources/views/app.blade.php)
+// })->where('any', '.*');

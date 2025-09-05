@@ -15,39 +15,42 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Global Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="{{ asset('frontend/css/swiper-bundle.min.css') }}" />
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Bootstrap  v5.2.3 -->
+    <link rel="stylesheet" href="{{ asset('frontend/css/bootstrap.css') }}">
+    <!-- css -->
+    <link rel="stylesheet" href="{{ asset('frontend/css/common.css') }}" />
+    <link rel="stylesheet" href="{{ asset('frontend/css/index.css') }}" />
+    <link rel="stylesheet" href="{{ asset('frontend/css/register.css') }}" />
 
     <!-- Page-specific Styles -->
     @stack('styles')
-
-    <!-- External Libraries (Modern Hierarchy) -->
-    <!-- Example: Tailwind, Alpine.js, FontAwesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body class="bg-gray-100 text-gray-900">
 
     <!-- Header -->
-    @include('partials.header')
+    @include('frontend.layouts.partials.header')
 
     <!-- Main Container -->
-    <main class="container mx-auto px-4 py-6">
+    {{-- <main class="container-fluid mx-auto px-4 py-6"> --}}
+    <main class="container-fluid">
         @yield('content')
     </main>
 
     <!-- Footer -->
-    @include('partials.footer')
+    @include('frontend.layouts.partials.footer')
 
     <!-- Global Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 
     <!-- Page-specific Scripts -->
     @stack('scripts')
-
-    <!-- Optional: Livewire or Vue support -->
-    @livewireScripts
 </body>
 
 </html>

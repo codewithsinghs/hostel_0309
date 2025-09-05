@@ -209,4 +209,14 @@ class AccessoryController extends Controller
         }
     }
 
+
+    public function index()
+{
+    return response()->json([
+        ['id' => 1, 'name' => 'Charger', 'qty' => 10, 'price' => 500],
+        ['id' => 2, 'name' => 'Headphones', 'qty' => 5, 'price' => 1200],
+    ]);
+}
+
+
 }
