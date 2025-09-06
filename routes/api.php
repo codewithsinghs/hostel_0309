@@ -567,6 +567,11 @@ Route::post('/login', [NAuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/ndashboard', [NAuthController::class, 'dashboard']);
     Route::post('/logout', [NAuthController::class, 'logout']);
+
+     Route::patch('/users/{user}/toggle-status', [NAuthController::class, 'toggleStatus']);
+    Route::delete('/users/{user}', [NAuthController::class, 'destroy']);
+    Route::get('/users/{user}', [NAuthController::class, 'show']);
+
 });
 // Route::middleware('auth:sanctum')->get('/ndashboard', [NAuthController::class, 'dashboard']);
 // Route::middleware('auth:sanctum')->get('/ndashboard', function (Request $request) {

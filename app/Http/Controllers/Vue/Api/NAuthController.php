@@ -96,7 +96,7 @@ class NAuthController extends Controller
     //     ]);
     // }
 
-     public function login(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -124,21 +124,39 @@ class NAuthController extends Controller
 
     public function dashboard(Request $request)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Unauthenticated',
-            ], 401);
-        }
+        try {
+            $user = $request->user(); // authenticated user
+            if (!$user) {
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
 
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ],
-        ]);
+            // Metrics
+            $metrics = [
+                'users' => User::count(),
+                'sessions' => 120, // Example, replace with real session count
+                'requests' => 300, // Example, replace with real request count
+            ];
+
+            // Recent 5 users
+            $recentUsers = User::latest()->take(5)->get(['id', 'name', 'email', 'status', 'created_at']);
+
+            return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'status' => $user->status,
+                ],
+                'metrics' => $metrics,
+                'recentUsers' => $recentUsers,
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Dashboard error: {$e->getMessage()}", ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'message' => 'Failed to load dashboard',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function logout(Request $request)
@@ -152,5 +170,30 @@ class NAuthController extends Controller
             'status' => true,
             'message' => 'Logged out successfully',
         ]);
+    }
+
+    public function toggleStatus(User $user)
+{
+    // Toggle the status
+    $user->status = !$user->status;
+    $user->save();
+
+    return response()->json([
+        'message' => 'Status updated',
+        'user' => $user,
+        'status' => (bool) $user->status,
+    ]);
+    
+}
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+        return response()->json(['message' => 'User deleted']);
+    }
+
+    public function show(User $user)
+    {
+        return response()->json(['user' => $user]);
     }
 }
