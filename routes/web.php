@@ -366,6 +366,8 @@ Route::get('/guest/register', fn() => view('frontend.vue.guest.register'))->name
 Route::get('/register', function () {return view('frontend.vue.auth.register');})->name('register');
 Route::get('/login', function () {return view('frontend.vue.auth.login');})->name('login');
 
+Route::get('/admin', function () {return view('frontend.vue.admin.dashboard');})->name('admin.dashboard');
+
 // Vue SPA pages (catch-all)
 // Route::get('/{any}', function () {
 //     return view('app'); // Vue entry point (resources/views/app.blade.php)

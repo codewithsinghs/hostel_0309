@@ -25,14 +25,14 @@ import router from './router'
 
 import axios from "axios";
 
-axios.defaults.baseURL = "/api";
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("auth_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// axios.defaults.baseURL = "/api";
+// axios.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("auth_token");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
 
 const app = createApp(App)
 app.use(router)

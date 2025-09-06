@@ -45,6 +45,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\AccessoryHeadController;
 use App\Http\Controllers\Apis\V1\LoginController;
+use App\Http\Controllers\Vue\Api\NAuthController;
 use App\Http\Controllers\StudentAccessoryController;
 use App\Http\Controllers\RoomChangeMessageController;
 
@@ -508,39 +509,39 @@ Route::post('/send-sms', function (Request $request) {
 
 
 
-//AWS Mail Service for test
-Route::post('/send-mail', function (Request $request) {
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email',
-        'subject' => 'required|string',
-        'name' => 'required|string',
-        'body' => 'required|string',
-    ]);
+// //AWS Mail Service for test
+// Route::post('/send-mail', function (Request $request) {
+//     $validator = Validator::make($request->all(), [
+//         'email' => 'required|email',
+//         'subject' => 'required|string',
+//         'name' => 'required|string',
+//         'body' => 'required|string',
+//     ]);
 
-    if ($validator->fails()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
-        ], 422);
-    }
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Validation failed',
+//             'errors' => $validator->errors()
+//         ], 422);
+//     }
 
-    $response = MailService::send(
-        $request->email,
-        $request->subject,
-        'emails.hostel_welcome',
-        [
-            'name' => $request->name,
-            'body' => $request->body
-        ]
-    );
+//     $response = MailService::send(
+//         $request->email,
+//         $request->subject,
+//         'emails.hostel_welcome',
+//         [
+//             'name' => $request->name,
+//             'body' => $request->body
+//         ]
+//     );
 
-    return response()->json([
-        'success' => $response['success'],
-        'message' => $response['message'] ?? 'Mail operation done',
-        'data' => $response
-    ]);
-});
+//     return response()->json([
+//         'success' => $response['success'],
+//         'message' => $response['message'] ?? 'Mail operation done',
+//         'data' => $response
+//     ]);
+// });
 
 
 
@@ -560,10 +561,19 @@ Route::prefix('notifications')->group(function () {
 
 
 Route::get('/accessories', [AccessoryController::class, 'index']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [NAuthController::class, 'register']);
+Route::post('/login', [NAuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/dashboard', [AuthController::class, 'dashboard']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/ndashboard', [NAuthController::class, 'dashboard']);
+    Route::post('/logout', [NAuthController::class, 'logout']);
 });
+// Route::middleware('auth:sanctum')->get('/ndashboard', [NAuthController::class, 'dashboard']);
+// Route::middleware('auth:sanctum')->get('/ndashboard', function (Request $request) {
+//     return response()->json([
+//         'status' => true,
+//         'user'   => $request->user(),
+//     ]);
+// });
+
+// Route::get('/ndashboard', [NAuthController::class, 'dashboard'])->middleware('auth:sanctum');

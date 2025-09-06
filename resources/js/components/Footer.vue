@@ -5,7 +5,7 @@
         <section class="contact-section">
             <div class="contact-container">
                 <!-- Left Content -->
-                <div class="contact-info">
+                <!-- <div class="contact-info">
                     <p class="contact-subtitle">CONTACT US</p>
                     <h2 class="contact-title">
                         Feel Free To Contact Us Anytime
@@ -44,10 +44,10 @@
                             <a href="Register.html">→</a>
                         </button>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Right Form -->
-                <div class="contact-form">
+                <!-- <div class="contact-form">
                     <img
                         class="contact-form-img-1"
                         src="../../front/img/contact-img-1.png"
@@ -75,7 +75,7 @@
                         ></textarea>
                         <button type="submit">Send Message Now</button>
                     </form>
-                </div>
+                </div> -->
             </div>
         </section>
     </section>

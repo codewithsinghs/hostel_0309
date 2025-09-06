@@ -22,7 +22,12 @@ export default [
     path: "/admin",
     component: AdminLayout,
     children: [
-      { path: "", name: "admin.dashboard", component: Dashboard, meta: { requiresAuth: true } },
+      {
+        path: "",
+        name: "admin.dashboard",
+        component: Dashboard,
+        meta: { requiresAuth: true },
+      },
     ],
   },
 ];

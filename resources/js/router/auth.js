@@ -12,25 +12,43 @@
 //   ],
 // };
 
-import AuthLayout from "../layouts/AuthLayout.vue";
-import DefaultLayout from "../layouts/DefaultLayout.vue";
+// import AuthLayout from "../layouts/AuthLayout.vue";
+// import DefaultLayout from "../layouts/DefaultLayout.vue";
+// import Login from "../pages/auth/Login.vue";
+// import Register from "../pages/auth/Register.vue";
+
+// export default [
+//   {
+//     path: "/login",
+//     // component: DefaultLayout,
+//     component: DefaultLayout,
+//     children: [
+//       { path: "", name: "login", component: Login, meta: { guestOnly: true } },
+//     ],
+//   },
+//   {
+//     path: "/register",
+//     component: DefaultLayout,
+//     children: [
+//       { path: "", name: "register", component: Register, meta: { guestOnly: true } },
+//     ],
+//   },
+// ];
+
 import Login from "../pages/auth/Login.vue";
 import Register from "../pages/auth/Register.vue";
 
 export default [
   {
     path: "/login",
-    // component: DefaultLayout,
-    component: DefaultLayout,
-    children: [
-      { path: "", name: "login", component: Login, meta: { guestOnly: true } },
-    ],
+    name: "login",
+    component: Login,
+    meta: { guestOnly: true },
   },
   {
     path: "/register",
-    component: DefaultLayout,
-    children: [
-      { path: "", name: "register", component: Register, meta: { guestOnly: true } },
-    ],
+    name: "register",
+    component: Register,
+    meta: { guestOnly: true },
   },
 ];

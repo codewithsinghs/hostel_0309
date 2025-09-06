@@ -29,7 +29,7 @@ export default [
       { path: "", name: "home", component: Home },
       { path: "about", name: "about", component: About },
       { path: "contact", name: "contact", component: Contact },
-       { path: "/accessories", name: "accessory-list", component: AccessoryList },
+      { path: "accessories", name: "accessory-list", component: AccessoryList },
     ],
   },
 ];
