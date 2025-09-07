@@ -172,28 +172,97 @@ class NAuthController extends Controller
         ]);
     }
 
-    public function toggleStatus(User $user)
-{
-    // Toggle the status
-    $user->status = !$user->status;
-    $user->save();
-
-    return response()->json([
-        'message' => 'Status updated',
-        'user' => $user,
-        'status' => (bool) $user->status,
-    ]);
-    
-}
-
-    public function destroy(User $user)
+    public function toggleStatus(User $user, Request $request)
     {
-        $user->delete();
-        return response()->json(['message' => 'User deleted']);
+        // $this->authorize('update', $user); // optional if policies
+
+        Log::info('status');
+        Log::alert('request', $request->all());
+        $validated = $request->validate([
+            'status' => 'required|boolean',
+        ]);
+
+        Log::alert('validated', $validated);
+        $user->status = $validated['status'];
+        $user->save();
+
+        Log::alert('validated', $user->toArray());
+        return response()->json([
+            'message' => 'Status updated',
+            'user' => $user,
+        ]);
     }
+
+    // public function destroy(User $user)
+    // {
+    //     if (auth()->id() === $user->id) {
+    //         return response()->json(['message' => 'You cannot delete yourself'], 403);
+    //     }
+
+    //     $user->delete();
+
+    //     return response()->json(['message' => 'User deleted']);
+    // }
+
 
     public function show(User $user)
     {
         return response()->json(['user' => $user]);
     }
+
+    public function index()
+    {
+        return User::latest()->get();
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6',
+            'status'   => 'boolean',
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+        $user = User::create($validated);
+
+        return response()->json(['message' => 'User created', 'user' => $user], 201);
+    }
+
+    // public function show(User $user)
+    // {
+    //     return response()->json(['user' => $user]);
+    // }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            'status'   => 'boolean',
+        ]);
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $user->update($validated);
+
+        return response()->json(['message' => 'User updated', 'user' => $user]);
+    }
+
+    public function destroy(User $user, Request $request)
+    {
+        if ($request->user()->id === $user->id) {
+            return response()->json(['message' => 'You cannot delete yourself'], 403);
+        }
+
+        $user->delete();
+        return response()->json(['message' => 'User deleted']);
+    }
 }
+

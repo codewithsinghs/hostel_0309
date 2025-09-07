@@ -25,6 +25,10 @@ class Kernel extends HttpKernel
         'token.expiry' => \App\Http\Middleware\TokenExpiryCheck::class,
         'guest_api_auth'=> \App\Http\Middleware\GuestApiAuthenticate::class,
         'admin_api_auth'=> \App\Http\Middleware\AdminApiAuthenticate::class,
+
+        'api.role' => \App\Http\Middleware\ApiRolePermission::class,
+        'api.permission' => \App\Http\Middleware\ApiPermissionMiddleware::class,
+
     ];
 
 
