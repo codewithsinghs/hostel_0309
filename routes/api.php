@@ -73,7 +73,8 @@ use App\Http\Controllers\RoomChangeMessageController;
 Route::get('/faculties/active', [FacultiesController::class, 'getActiveFaculties']);
 Route::get('/faculties/{faculty_id}/departments', [DepartmentController::class, 'getActiveDepartments']);
 Route::get('/departments/{department_id}/courses', [CourseController::class, 'getActiveCourses']);
-
+Route::get('/feebreakups/{faculty}', [FeeController::class, 'getFeeBreakUps']);
+Route::post('/fee/calculate', [FeeController::class, 'calculate']);
 
 Route::post('/login', [AuthController::class, 'login']);
 // Guest Routes 

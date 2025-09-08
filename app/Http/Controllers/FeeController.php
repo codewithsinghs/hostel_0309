@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Fee;
 use App\Models\FeeHead;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
-use Exception;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Services\FeeCalculatorService;
 
 class FeeController extends Controller
 {
+    protected $feeCalculator;
+
+    public function __construct(FeeCalculatorService $feeCalculator)
+    {
+        $this->feeCalculator = $feeCalculator;
+    }
+
     private function apiResponse($success, $message, $data = null, $status = 200, $errors = null)
     {
         return response()->json([
@@ -130,5 +139,47 @@ class FeeController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+    // GET /api/fees/{facultyId}
+    public function getFeeBreakUps($facultyId)
+    {
+        Log::info('fetching Fee');
+        try {
+            $fees = Fee::with('feeHead')
+                ->where('is_active', 1)
+                ->whereHas('feeHead', fn($q) => $q->where('university_id', $facultyId))
+                ->get();
+                Log::info('fetched', );
+            return $this->apiResponse(true, 'Fee fetched successfully.', $fees);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->apiResponse(false, 'Fee not found.', null, 404);
+        } catch (Exception $e) {
+            return $this->apiResponse(false, 'Failed to fetch fee.', null, 500, [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function calculate(Request $request)
+    {
+        Log::info($request->all());
+        $request->validate([
+            'faculty_id' => 'required|integer',
+            'months' => 'required|integer|min:1',
+            'accessories' => 'array',
+        ]);
+
+        $breakup = $this->feeCalculator->calculate(
+            $request->faculty_id,
+            $request->months,
+            $request->accessories ?? []
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => $breakup,
+        ]);
     }
 }

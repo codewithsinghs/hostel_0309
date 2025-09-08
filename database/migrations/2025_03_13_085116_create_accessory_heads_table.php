@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('accessory_heads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('university_id')->nullable()->constrained('universities')->onDelete('set null'); 
             $table->string('name'); // e.g., Mattress, Table, Fan
             $table->timestamps();
             $table->unsignedBigInteger('created_by')->nullable();

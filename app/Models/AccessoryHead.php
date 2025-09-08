@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccessoryHead extends Model
 {
-    protected $table = 'accessory_heads';
+    protected $table = 'accessories_heads';
 
     use HasFactory;
 
     protected $fillable = [
         'name',
+        'university_id',
         'created_by',
         'university_id',
     ];

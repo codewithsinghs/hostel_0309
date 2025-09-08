@@ -10,6 +10,8 @@ class Faculty extends Model
     use HasFactory;
     protected $table = 'faculties';
 
+    protected $fiilable = ['name', 'university_id'];
+    
     public function guests()
     {
         return $this->hasMany(Guest::class, 'faculty_id');

@@ -13,12 +13,13 @@ class Fees extends Seeder
 {
     public function run()
     {
+        $university_id =1;
         // Create fee_heads
         $feeHeads = [
-            ['name' => 'Hostel Fee'],
-            ['name' => 'Mess Fee'],
-            ['name' => 'Other'],
-            ['name' => 'Caution Money'],
+            ['name' => 'Hostel Fee', 'university_id' => $university_id],
+            ['name' => 'Mess Fee', 'university_id' => $university_id],
+            ['name' => 'Other', 'university_id' => $university_id],
+            ['name' => 'Caution Money', 'university_id' => $university_id],
         ];
 
         $feeHeadMap = [];

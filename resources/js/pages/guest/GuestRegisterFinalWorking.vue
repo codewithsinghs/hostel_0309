@@ -134,6 +134,59 @@
                 </section>
                 <!-- Profile Information End -->
 
+                <!-- Fee Waiver Start -->
+                <section class="form-box">
+                    <!-- Heading -->
+                    <div class="form-header">
+                        <h3>Fee Waiver Request (Optional)</h3>
+                        <!-- <button class="edit-btn">Edit</button> -->
+                    </div>
+
+                    <!-- Introductory Message -->
+                    <div class="alert alert-info mb-2" role="alert">
+                        If you already have documentation or eligibility for a
+                        fee waiver, you may submit your request here. This
+                        section is optional and intended to support students
+                        with verified Channel.
+                    </div>
+
+                    <!-- Apply Fee Waiver Checkbox -->
+                    <div class="form-field">
+                        <div class="check-flex">
+                            <input type="checkbox" name="fee_waiver" id="fee_waiver" value="1" required />
+                            <label class="m-0" for="fee_waiver">
+                                I would like to request a fee waiver based on
+                                <a href="/terms-and-conditions" target="_blank">
+                                    existing eligibility or documentation.</a>
+                                <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div id="feeWaiverError" class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Upload Supporting Document -->
+                    <div class="form-field mt-5">
+                        <label for="waiver_document">Supporting Document
+                            <span class="text-danger">* (Upload relevant documentation (e.g.,
+                                scholarship letter, income certificate))
+                            </span>
+                        </label>
+                        <input type="file" name="attachment" id="waiver_document" required
+                            accept=".pdf,.jpg,.jpeg,.png" />
+                        <div id="waiverDocumentError" class="invalid-feedback"></div>
+                    </div>
+
+                    <!-- Remarks -->
+                    <div class="form-field mt-5">
+                        <label for="remarks">Additional Remarks</label>
+                        <textarea name="remarks" id="remarks" rows="3" class="form-control"
+                            placeholder="Feel free to share any context or notes that may support your request."
+                            aria-describedby="remarksError"></textarea>
+                        <div id="remarksError" class="invalid-feedback"></div>
+                    </div>
+                </section>
+                <!-- Fee Waiver End -->
+
                 <!-- Family Details Start -->
                 <section class="form-box">
                     <!-- Heading -->
@@ -202,7 +255,86 @@
                 </section>
                 <!-- Family Details End -->
 
+                <!-- Preferences Start -->
+                <section class="form-box">
+                    <!-- Heading -->
+                    <div class="form-header">
+                        <h3>Preferences</h3>
+                        <!-- <button class="edit-btn">Edit</button> -->
+                    </div>
 
+                    <!-- Form-grid -->
+                    <div class="form-grid">
+                        <!-- Food Preference -->
+                        <div class="form-field">
+                            <label for="food">Select Food Preference
+                                <span class="text-danger">*</span></label>
+                            <select name="Food_id" id="Food" required aria-describedby="foodPreferenceError">
+                                <option selected value="">
+                                    Select Food Preference
+                                </option>
+                                <option value="1">Veg</option>
+                                <option value="2">Non-Veg</option>
+                                <option value="3">Both</option>
+                            </select>
+                            <div id="foodPreferenceError" class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Bed Preference -->
+                        <div class="form-field">
+                            <label for="bed_id">Select Bed Preference
+                                <span class="text-danger">*</span></label>
+                            <select name="Bed_id" id="Bed" required aria-describedby="bedPreferenceError">
+                                <option selected value="">
+                                    Select Bed Preference
+                                </option>
+                                <option value="1">Single</option>
+                                <option value="2">Double</option>
+                                <option value="3">Triple</option>
+                            </select>
+                            <div id="bedPreferenceError" class="invalid-feedback"></div>
+                        </div>
+
+                        <!-- Stay Duration -->
+                        <!-- <div class="form-field">
+                            <label for="month">Select Stay Duration
+                                <span class="text-danger">*</span></label>
+                            <select name="months" id="months" required aria-describedby="bedPreferenceError">
+                                <option selected value="">
+                                    Select Bed Preference
+                                </option>
+                                <option value="1">Temporary (1 Month)</option>
+                                <option value="3">Regular (3 Months)</option>
+                            </select>
+                            <div id="bedPreferenceError" class="invalid-feedback"></div>
+                        </div> -->
+
+                        <!-- Stay Duration -->
+                        <!-- <div class="form-field">
+                            <label for="months">Select Stay Duration <span class="text-danger">*</span></label>
+                            <select name="months" id="months" v-model="months" aria-describedby="monthsError">
+                                <option value="">Select Stay Duration</option>
+                                <option value="1">Temporary (1 Month)</option>
+                                <option value="3">Regular (3 Months)</option>
+                            </select>
+                            <div id="monthsError" class="invalid-feedback"></div>
+                        </div> -->
+
+                        <div class="form-field">
+                            <label for="months">Select Stay Duration <span class="text-danger">*</span></label>
+                            <select v-model="months" name="months" id="months" aria-describedby="monthsError">
+                                <option value="">Select Duration</option>
+                                <option value="1">Temporary (1 Month)</option>
+                                <option value="3">Regular (3 Months)</option>
+                                <option value="6">Half Year (6 Months)</option>
+                                <option value="12">Yearly (12 Months)</option>
+                            </select>
+                            <div id="monthsError" class="invalid-feedback"></div>
+                        </div>
+
+                    </div>
+                </section>
+                <!-- Preferences Start -->
 
                 <!-- Accessories Start -->
                 <section class="form-box">
@@ -226,31 +358,31 @@
                     </div> -->
 
 
-                    <!-- Complimentary Accessories Final Working -->
-                    <!-- <div class="mb-3 ">
+                    <!-- Complimentary Accessories -->
+                    <div class="mb-3 ">
                         <label class="">Complimentary Accessories</label>
                         <div class="border rounded p-3 bg-light d-flex flex-wrap gap-2" id="default-accessories"
                             style="display: flex;">
                             <template v-if="loadingAccessories">
                                 <p class="text-muted mb-0">Fetching complimentary accessories...</p>
                             </template>
-<template v-else-if="errorAccessories">
+                            <template v-else-if="errorAccessories">
                                 <p class="text-danger mb-0">{{ errorAccessories }}</p>
                             </template>
-<template v-else-if="!defaultAccessories.length">
+                            <template v-else-if="!defaultAccessories.length">
                                 <p class="text-muted mb-0">No complimentary accessories available.</p>
                             </template>
-<template v-else>
+                            <template v-else>
                                 <div v-for="acc in defaultAccessories" :key="acc.id"
                                     class="border rounded p-2 mb-2 bg-white shadow-sm text-sm" style="font-size:12px;">
                                     <i class="bi bi-gift-fill text-success me-2"></i>
                                     <strong>{{ acc.name }}</strong>
                                 </div>
                             </template>
-</div>
-</div> -->
+                        </div>
+                    </div>
 
-                    <!-- Optional Add-ons  Final Working -->
+                    <!-- Optional Add-ons -->
                     <!-- <div class="mb-3 ">
                         <label class="form-label ">Optional Add-on Accessories</label>
                         <div class="border rounded p-3 bg-light d-flex flex-wrap gap-3" id="additional-accessories">
@@ -278,14 +410,12 @@
                         </div>
                     </div> -->
 
-
-                    <!-- Optional Add-ons  Final Working -->
-                    <div class="my-1">
-                        <label class="form-label fs-4">Optional Add-on Accessories</label>
-                        <div class="border rounded p-3 bg-light d-flex flex-wrap gap-4" id="additional-accessories">
+                    <div class="mb-3 ">
+                        <label class="form-label ">Optional Add-on Accessories</label>
+                        <div class="border rounded p-3 bg-light d-flex flex-wrap gap-3" id="additional-accessories">
                             <div v-for="acc in additionalAccessories" :key="acc.id"
-                                class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center" style="margin-right: 30px;">
-                                <input class="form-check-input fs-5 me-3" type="checkbox" :value="acc.id"
+                                class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center">
+                                <input class="form-check-input me-2" type="checkbox" :value="acc.id"
                                     v-model="selectedAccessories" name="accessories[]" :id="`accessory-${acc.id}`" />
                                 <label class="form-check-label w-100" :for="`accessory-${acc.id}`"
                                     style="font-size:12px;">
@@ -328,7 +458,7 @@
                         </div>
                     </div> -->
 
-
+                 
                     <!-- Fee Breakup -->
                     <!-- <div v-if="feeBreakup">
                         <h5 class="fw-bold mb-3">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
@@ -363,202 +493,68 @@
                         </h5>
                     </div> -->
 
+                    <div v-if="feeBreakup" class="card shadow-sm mt-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-bordered mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Fee Component</th>
+          <th>Stay Duration</th>
+          <th class="text-end">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Base Fees -->
+        <tr v-for="fee in feeBreakup.base_fees" :key="fee.name">
+          <td>{{ fee.name }}</td>
+          <td>{{ feeBreakup.stay_duration }}</td>
+          <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
+        </tr>
 
-                </section>
+        <!-- One-time Fees -->
+        <tr v-for="fee in feeBreakup.one_time_fees" :key="fee.name" class="text-primary">
+          <td>{{ fee.name }} (One-time)</td>
+          <td>One-time</td>
+          <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
+        </tr>
 
-                <!-- Preferences Start -->
-                <section class="form-box">
-                    <!-- Heading -->
-                    <!-- <div class="form-header">
-                        <h3>Preferences</h3>
-                    </div> -->
+        <!-- Accessories -->
+        <tr v-for="acc in feeBreakup.accessories" :key="acc.name" class="text-muted">
+          <td>{{ acc.name }} (Add-on)</td>
+          <td>{{ feeBreakup.stay_duration }}</td>
+          <td class="text-end">₹ {{ parseFloat(acc.amount).toFixed(2) }}</td>
+        </tr>
 
-                    <!-- Form-grid -->
-                    <div class="row">
-                        <!-- Food Preference -->
-                        <!-- <div class="form-field">
-                            <label for="food">Select Food Preference
-                                <span class="text-danger">*</span></label>
-                            <select name="Food_id" id="Food" required aria-describedby="foodPreferenceError">
-                                <option selected value="">
-                                    Select Food Preference
-                                </option>
-                                <option value="1">Veg</option>
-                                <option value="2">Non-Veg</option>
-                                <option value="3">Both</option>
-                            </select>
-                            <div id="foodPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <!-- Bed Preference -->
-                        <!-- <div class="form-field">
-                            <label for="bed_id">Select Bed Preference
-                                <span class="text-danger">*</span></label>
-                            <select name="Bed_id" id="Bed" required aria-describedby="bedPreferenceError">
-                                <option selected value="">
-                                    Select Bed Preference
-                                </option>
-                                <option value="1">Single</option>
-                                <option value="2">Double</option>
-                                <option value="3">Triple</option>
-                            </select>
-                            <div id="bedPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <!-- Stay Duration -->
-                        <!-- <div class="form-field">
-                            <label for="month">Select Stay Duration
-                                <span class="text-danger">*</span></label>
-                            <select name="months" id="months" required aria-describedby="bedPreferenceError">
-                                <option selected value="">
-                                    Select Bed Preference
-                                </option>
-                                <option value="1">Temporary (1 Month)</option>
-                                <option value="3">Regular (3 Months)</option>
-                            </select>
-                            <div id="bedPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <!-- Stay Duration -->
-                        <!-- <div class="form-field">
-                            <label for="months">Select Stay Duration <span class="text-danger">*</span></label>
-                            <select name="months" id="months" v-model="months" aria-describedby="monthsError">
-                                <option value="">Select Stay Duration</option>
-                                <option value="1">Temporary (1 Month)</option>
-                                <option value="3">Regular (3 Months)</option>
-                            </select>
-                            <div id="monthsError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <div class="col-md-6">
-                            <div class="form-header">
-                                <h3>Preferences</h3>
-                            </div>
-
-                            <!-- Complimentary Accessories -->
-                            <div class="form-field">
-                                <label for="months">Select Stay Duration <span class="text-danger">*</span></label>
-                                <select v-model="months" name="months" id="months" aria-describedby="monthsError">
-                                    <option value="">Select Duration</option>
-                                    <option value="1">Temporary (1 Month)</option>
-                                    <option value="3">Regular (3 Months)</option>
-                                    <option value="6">Half Year (6 Months)</option>
-                                    <option value="12">Yearly (12 Months)</option>
-                                </select>
-                                <div id="monthsError" class="invalid-feedback"></div>
-                            </div>
-                            <!-- Complimentary Accessories --> 
-
-                            <!-- Complimentary Accessories -->
-                            <div class="mb-3 mt-4">
-                                <label class="fs-4">Complimentary Accessories</label>
-                                <div class="border rounded p-3 bg-light d-flex flex-wrap gap-2" id="default-accessories"
-                                    style="display: flex;">
-                                    <template v-if="loadingAccessories">
-                                        <p class="text-muted mb-0">Fetching complimentary accessories...</p>
-                                    </template>
-                                    <template v-else-if="errorAccessories">
-                                        <p class="text-danger mb-0">{{ errorAccessories }}</p>
-                                    </template>
-                                    <template v-else-if="!defaultAccessories.length">
-                                        <p class="text-muted mb-0">No complimentary accessories available.</p>
-                                    </template>
-                                    <template v-else>
-                                        <div v-for="acc in defaultAccessories" :key="acc.id"
-                                            class="border rounded p-2 mb-2 bg-white shadow-sm text-sm"
-                                            style="font-size:12px;">
-                                            <i class="bi bi-gift-fill text-success me-2"></i>
-                                            <strong>{{ acc.name }}</strong>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Complimentary Accessories -->
-
-                        <!-- Fee Breakups -->
-                        <div class="col-md-6">
-                            <div v-if="feeBreakup" class="card shadow-sm mt-4">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-bordered mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Fee Component</th>
-                                                <th>Stay Duration</th>
-                                                <th class="text-end">Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Base Fees -->
-                                            <tr v-for="fee in feeBreakup.base_fees" :key="fee.name">
-                                                <td>{{ fee.name }}</td>
-                                                <td>{{ feeBreakup.stay_duration }}</td>
-                                                <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
-                                            </tr>
-
-                                            <!-- One-time Fees -->
-                                            <tr v-for="fee in feeBreakup.one_time_fees" :key="fee.name"
-                                                class="text-primary">
-                                                <td>{{ fee.name }} (One-time)</td>
-                                                <td>One-time</td>
-                                                <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
-                                            </tr>
-
-                                            <!-- Accessories -->
-                                            <tr v-for="acc in feeBreakup.accessories" :key="acc.name"
-                                                class="text-muted">
-                                                <td>{{ acc.name }} (Add-on)</td>
-                                                <td>{{ feeBreakup.stay_duration }}</td>
-                                                <td class="text-end">₹ {{ parseFloat(acc.amount).toFixed(2) }}</td>
-                                            </tr>
-
-                                            <!-- Discount -->
-                                            <tr v-if="feeBreakup.discount" class="table-success">
-                                                <td colspan="2">
-                                                    <strong>{{ feeBreakup.discount.type }}</strong> ({{
-                                                        feeBreakup.discount.percentage }}% Off)
-                                                </td>
-                                                <td class="text-end">₹ {{
-                                                    parseFloat(feeBreakup.discount.amount).toFixed(2) }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot class="table-dark text-white">
-                                            <tr>
-                                                <td colspan="2" class="text-end fw-bold">Total Payable</td>
-                                                <td class="text-end fw-bold">₹ {{
-                                                    parseFloat(feeBreakup.total).toFixed(2) }}
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <!-- Fee BreakUps -->
-                        
-
-
-                    </div>
+        <!-- Discount -->
+        <tr v-if="feeBreakup.discount" class="table-success">
+          <td colspan="2">
+            <strong>{{ feeBreakup.discount.type }}</strong> ({{ feeBreakup.discount.percentage }}% Off)
+          </td>
+          <td class="text-end">₹ {{ parseFloat(feeBreakup.discount.amount).toFixed(2) }}</td>
+        </tr>
+      </tbody>
+      <tfoot class="table-dark text-white">
+        <tr>
+          <td colspan="2" class="text-end fw-bold">Total Payable</td>
+          <td class="text-end fw-bold">₹ {{ parseFloat(feeBreakup.total).toFixed(2) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
 
                     <!-- Agreement -->
-                <div class="form-check">
-                    <input class="form-check-input fs-4 fw-semibold" type="checkbox" id="agree" name="agree" />
-                    <label class="form-check-label fs-4" for="agree">
-                        I agree to the terms and conditions
-                    </label>
-                    <div id="agreeError" class="invalid-feedback"></div>
-                </div>
-
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="agree" name="agree" />
+                        <label class="form-check-label" for="agree">
+                            I agree to the terms and conditions
+                        </label>
+                        <div id="agreeError" class="invalid-feedback"></div>
+                    </div>
                 </section>
-                <!-- Preferences End -->
-
-                
 
                 <!-- Submit Btn -->
                 <section class="submit-btn-registration">

@@ -134,9 +134,10 @@ class FacultiesController extends Controller
 
     public function getActiveFaculties()
     {
+        Log::alert('got fsc');
         try {
             $faculties = \App\Models\Faculty::select('id', 'name')->where('status', 1)->get();
-            // Log::info($faculties);
+            Log::info($faculties);
             if ($faculties->isEmpty()) {
                 return response()->json(['success' => false, 'message' => 'No active faculties found.', 'data' => null], 404);
             }

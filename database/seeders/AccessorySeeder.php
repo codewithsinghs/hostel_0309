@@ -11,6 +11,7 @@ class AccessorySeeder extends Seeder
 {
     public function run()
     {
+        $university_id = 1;
         $admin = 2;
         $fromDate = Carbon::now();
         $toDate = Carbon::now()->addYear();
@@ -56,16 +57,16 @@ class AccessorySeeder extends Seeder
 
         // Create accessory_heads
         $accessoryHeads = [
-            ['name' => 'Study Table', 'created_by' => $admin],
-            ['name' => 'Chair', 'created_by' => $admin],
-            ['name' => 'Almira', 'created_by' => $admin],
-            ['name' => 'Locker', 'created_by' => $admin],
-            ['name' => 'Welcome Kit', 'created_by' => $admin],
-            ['name' => 'Studt Lamp', 'created_by' => $admin],
-            ['name' => 'Bookshelf', 'created_by' => $admin],
-            ['name' => 'Mattress', 'created_by' => $admin],
-            ['name' => 'BedSheet', 'created_by' => $admin],
-            ['name' => 'Pillow', 'created_by' => $admin],
+            ['name' => 'Study Table', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Chair', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Almira', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Locker', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Welcome Kit', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Studt Lamp', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Bookshelf', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Mattress', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'BedSheet', 'university_id' => $university_id, 'created_by' => $admin],
+            ['name' => 'Pillow', 'university_id' => $university_id, 'created_by' => $admin],
         ];
 
         $headMap = [];
