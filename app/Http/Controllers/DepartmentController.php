@@ -15,16 +15,15 @@ class DepartmentController extends Controller
     {
         try {
             $user = \App\Models\User::find($request->header('auth-id'));
-            if($request->query('faculty_id'))
-            {
+            if ($request->query('faculty_id')) {
                 $facultyId = $request->query('faculty_id');
                 $departments = Department::where('faculty_id', $facultyId)->with('faculty')->whereHas('faculty', function ($query) use ($user) {
-                $query->where('university_id', $user->university_id);
-            })->get();
+                    $query->where('university_id', $user->university_id);
+                })->get();
             } else {
                 $departments = Department::with('faculty')->whereHas('faculty', function ($query) use ($user) {
-                $query->where('university_id', $user->university_id);
-            })->get();
+                    $query->where('university_id', $user->university_id);
+                })->get();
             }
             if ($departments->isEmpty()) {
                 return response()->json(['success' => false, 'message' => 'No departments found.', 'data' => null], 404);
@@ -34,7 +33,6 @@ class DepartmentController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while fetching departments.', 'errors' => ['exception' => $e->getMessage()]], 500);
         }
-
     }
 
     /**
@@ -68,9 +66,7 @@ class DepartmentController extends Controller
             return response()->json(['success' => false, 'message' => 'Validation failed.', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An unexpected error occurred.', 'errors' => ['exception' => $e->getMessage()]], 500);
-        }       
-
-        
+        }
     }
 
     /**
@@ -137,23 +133,51 @@ class DepartmentController extends Controller
             return response()->json(['success' => false, 'message' => 'Department not found.', 'data' => null], 404);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while deleting the department.', 'errors' => ['exception' => $e->getMessage()]], 500);
-        }   
+        }
     }
 
+    // public function getActiveDepartments($facultyId = null)
+    // {
+    //     try {
+    //         $query = Department::where('status', 1)->with('faculty');
+    //         if ($facultyId) {
+    //             $query->where('faculty_id', $facultyId);
+    //         }
+    //         $departments = $query->get();
+    //         if ($departments->isEmpty()) {
+    //             return response()->json(['success' => false, 'message' => 'No active departments found.', 'data' => null], 404);
+    //         }
+    //         return response()->json(['success' => true, 'message' => 'Active departments fetched successfully.', 'data' => $departments], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['success' => false, 'message' => 'An error occurred while fetching active departments.', 'errors' => ['exception' => $e->getMessage()]], 500);
+    //     }
+    // }
     public function getActiveDepartments($facultyId = null)
     {
         try {
-            $query = Department::where('status', 1)->with('faculty');
+            // Fetch only necessary fields
+            $query = Department::select('id', 'name', 'faculty_id')
+                ->where('status', 1);
+
+            // Filter by faculty if provided
             if ($facultyId) {
                 $query->where('faculty_id', $facultyId);
             }
+
             $departments = $query->get();
-            if ($departments->isEmpty()) {
-                return response()->json(['success' => false, 'message' => 'No active departments found.', 'data' => null], 404);
-            }
-            return response()->json(['success' => true, 'message' => 'Active departments fetched successfully.', 'data' => $departments], 200);
+
+            // Return success even if no departments found, just send empty array
+            return response()->json([
+                'success' => true,
+                'message' => 'Active departments fetched successfully.',
+                'data' => $departments
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'An error occurred while fetching active departments.', 'errors' => ['exception' => $e->getMessage()]], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching active departments.',
+                'errors' => ['exception' => $e->getMessage()]
+            ], 500);
         }
     }
 }

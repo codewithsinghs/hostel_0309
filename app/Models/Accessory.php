@@ -9,14 +9,13 @@ class Accessory extends Model
 {
     use HasFactory;
 
-    protected $table = 'accessory';
+    protected $table = 'accessories';
     
     protected $casts = [
         'from_date' => 'date',
         'to_date' => 'date',
     ];
     
-
     protected $fillable = [
         'accessory_head_id',
         'price',

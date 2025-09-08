@@ -257,14 +257,14 @@ ol {
     border-radius: 2px;
 }
 
-.nav-link {
+.custom .nav-link {
     font-size: 1.6rem;
     color: var(--primary-black);
     font-weight: 500;
     margin: 0 1rem;
 }
 
-.nav-link:hover {
+.custom .nav-link:hover {
     font-weight: 700;
     color: var(--primary-clr);
 }

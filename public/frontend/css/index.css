@@ -756,7 +756,7 @@
     left: -25%;
     width: 100%;
     height: 100%;
-    background-image: url(../../public/contact-bg-img.png);
+    background-image: url(../../frontend/img/contact-bg-img.png);
     z-index: 1;
     border-radius: 17%;
 }

@@ -1,8 +1,8 @@
 // header section javascript
-function toggleMenu() {
-    const menu = document.getElementById("mobileMenu");
-    menu.classList.toggle("show");
-}
+// function toggleMenu() {
+//     const menu = document.getElementById("mobileMenu");
+//     menu.classList.toggle("show");
+// }
 
 // document.addEventListener("DOMContentLoaded", () => {
 //     // Login Popup functionality
@@ -67,21 +67,21 @@ function toggleMenu() {
 
 
 
-    let lastScrollY = window.scrollY;
-    let timeoutId = null;
-    const header = document.querySelector('.main-header');
+    // let lastScrollY = window.scrollY;
+    // let timeoutId = null;
+    // const header = document.querySelector('.main-header');
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > lastScrollY) {
-            header.classList.add('header-hidden'); // hide
-        } else {
-            header.classList.remove('header-hidden'); // show
-        }
-        lastScrollY = window.scrollY;
+    // window.addEventListener('scroll', () => {
+    //     if (window.scrollY > lastScrollY) {
+    //         header.classList.add('header-hidden'); // hide
+    //     } else {
+    //         header.classList.remove('header-hidden'); // show
+    //     }
+    //     lastScrollY = window.scrollY;
 
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            header.classList.remove('header-hidden'); // reappear when stop
-        }, 250);
-    });
+    //     clearTimeout(timeoutId);
+    //     timeoutId = setTimeout(() => {
+    //         header.classList.remove('header-hidden'); // reappear when stop
+    //     }, 250);
+    // });
 

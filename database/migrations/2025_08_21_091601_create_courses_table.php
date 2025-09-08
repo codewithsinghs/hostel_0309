@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('department_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

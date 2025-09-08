@@ -24,4 +24,7 @@ class AccessoryHead extends Model
     {
         return $this->hasMany(StudentAccessory::class);
     }
+
+    
+
 }

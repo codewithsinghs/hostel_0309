@@ -24,4 +24,7 @@ class Faculty extends Model
     {
         return $this->hasMany(Department::class, 'faculty_id');
     }
+
+
+
 }
