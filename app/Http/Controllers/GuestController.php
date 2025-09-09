@@ -22,27 +22,35 @@ class GuestController extends Controller
 {
     public function register(Request $request)
     {
+        Log::alert($request->all());
         try {
-            Log::alert($request->all());
+            
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:guests,email',
                 'faculty_id'    => 'required|exists:faculties,id',
                 'department_id' => 'required|exists:departments,id',
-                'course_id'     => 'required|exists:courses,id',
+                // 'course_id'     => 'required|exists:courses,id',
+                'course'     => 'required|exists:courses,name',
                 'gender' => 'required|in:Male,Female,Other',
-                'scholar_no' => 'required|unique:guests,scholar_no',
+                // 'scholar_no' => 'required|unique:guests,scholar_no',
+                'scholar_number' => 'required|unique:guests,scholar_no',
                 'fathers_name' => 'required|string|max:255',
                 'mothers_name' => 'required|string|max:255',
                 'local_guardian_name' => 'nullable|string|max:255',
-                'emergency_no' => 'required|string|max:20',
-                'number' => 'nullable|string|max:20',
-                'parent_no' => 'nullable|string|max:20',
-                'guardian_no' => 'nullable|string|max:20',
-                'room_preference' => 'required|string|max:255',
+                //'emergency_no' => 'required|string|max:20',
+                'emergency_contact' => 'required|string|max:20',
+                // 'number' => 'nullable|string|max:20',
+                'mobile' => 'nullable|string|max:20',
+                //'parent_no' => 'nullable|string|max:20',
+                'parent_contact' => 'nullable|string|max:20',
+                //'guardian_no' => 'nullable|string|max:20',
+                'guardian_contact' => 'nullable|string|max:20',
+                'room_preference' => 'nullable|string|max:255',
                 'months' => 'nullable|integer|min:1|max:12',
-                'accessory_head_ids' => 'nullable|array',
-                'accessory_head_ids.*' => 'exists:accessory_heads,id',
+                // 'accessory_head_ids' => 'nullable|array',
+                // 'accessory_head_ids.*' => 'exists:accessory_heads,id',
+                'accessories' => 'nullable|array',
                 'fee_waiver' => 'nullable|in:0,1',
                 'bihar_credit_card' => 'nullable|in:0,1',
                 'tnsd' => 'nullable|in:0,1',
@@ -53,9 +61,10 @@ class GuestController extends Controller
                     'required_if:fee_waiver,1', // Required only if fee_waiver is 1
                 ],
                 'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Optional file attachment (Max 5MB)
+                'agree' => 'nullable',
             ]);
 
-            log::info($validatedData);
+            log::info('Validated', $validatedData);
 
             // Start a database transaction
             DB::beginTransaction();

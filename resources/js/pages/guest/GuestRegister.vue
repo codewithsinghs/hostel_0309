@@ -60,7 +60,7 @@
                             <label for="name">Full Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="name" id="name" aria-describedby="nameError" required
-                                placeholder="Rajat Pradhan" />
+                                placeholder="Valid Input" />
                             <div id="nameError" class="invalid-feedback"></div>
                         </div>
 
@@ -122,7 +122,7 @@
                         <div class="form-field">
                             <label for="gender">Select gender
                                 <span class="text-danger">*</span></label>
-                            <select name="gender_id" id="gender" required aria-describedby="genderError">
+                            <select name="gender" id="gender" required aria-describedby="genderError">
                                 <option value="">Select gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -150,7 +150,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="fathers_name" id="fathers_name" required
-                                aria-describedby="fathersNameError" placeholder="Mr. Hariom Pradhan" />
+                                aria-describedby="fathersNameError" placeholder="Father's Name" />
                             <div id="fatherNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -159,7 +159,7 @@
                             <label for="mothers_name">Mother's Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="mothers_name" id="mothers_name" aria-describedby="mothersNameError"
-                                required placeholder="Kirti Pradhan" />
+                                required placeholder="Mother's Name" />
                             <div id="motherNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -177,7 +177,7 @@
                             <label for="local_guardian_name">Local Guardian Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="local_guardian_name" id="local_guardian_name"
-                                aria-describedby="localGuardianNameError" required placeholder="Rajat Pradhan" />
+                                aria-describedby="localGuardianNameError" required placeholder="Valid Input" />
                             <div id="localGuardianNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -212,157 +212,23 @@
                         <!-- <button class="edit-btn">Edit</button> -->
                     </div>
 
-                    <!-- Form-grid -->
-                    <!-- Free Accessories -->
-                    <!-- <div class="form-field">
-                        <label for="fathers_name">Free Accessories</label>
-                        <p name="" id=""></p>
-                    </div> -->
-
-                    <!-- Additional Accessories (Optional) -->
-                    <!-- <div class="form-field">
-                        <label for="fathers_name">Additional Accessories (Optional)</label>
-                        <p name="" id=""></p>
-                    </div> -->
-
-
-                    <!-- Complimentary Accessories Final Working -->
-                    <!-- <div class="mb-3 ">
-                        <label class="">Complimentary Accessories</label>
-                        <div class="border rounded p-3 bg-light d-flex flex-wrap gap-2" id="default-accessories"
-                            style="display: flex;">
-                            <template v-if="loadingAccessories">
-                                <p class="text-muted mb-0">Fetching complimentary accessories...</p>
-                            </template>
-<template v-else-if="errorAccessories">
-                                <p class="text-danger mb-0">{{ errorAccessories }}</p>
-                            </template>
-<template v-else-if="!defaultAccessories.length">
-                                <p class="text-muted mb-0">No complimentary accessories available.</p>
-                            </template>
-<template v-else>
-                                <div v-for="acc in defaultAccessories" :key="acc.id"
-                                    class="border rounded p-2 mb-2 bg-white shadow-sm text-sm" style="font-size:12px;">
-                                    <i class="bi bi-gift-fill text-success me-2"></i>
-                                    <strong>{{ acc.name }}</strong>
-                                </div>
-                            </template>
-</div>
-</div> -->
-
-                    <!-- Optional Add-ons  Final Working -->
-                    <!-- <div class="mb-3 ">
-                        <label class="form-label ">Optional Add-on Accessories</label>
-                        <div class="border rounded p-3 bg-light d-flex flex-wrap gap-3" id="additional-accessories">
-                            <template v-if="loadingAccessories">
-                                <p class="text-muted mb-0">Fetching add-on accessories...</p>
-                            </template>
-                            <template v-else-if="errorAccessories">
-                                <p class="text-danger mb-0">{{ errorAccessories }}</p>
-                            </template>
-                            <template v-else-if="!additionalAccessories.length">
-                                <p class="text-muted mb-0">No add-on accessories available.</p>
-                            </template>
-                            <template v-else>
-                                <div v-for="acc in additionalAccessories" :key="acc.id"
-                                    class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center">
-                                    <input class="form-check-input me-2" type="checkbox" :value="acc.id"
-                                        name="accessories[]" :id="`accessory-${acc.id}`" />
-                                    <label class="form-check-label w-100" :for="`accessory-${acc.id}`"
-                                        style="font-size:12px;">
-                                        <strong>{{ acc.name }}</strong>
-                                        <span class="text-muted"> ({{ acc.price.toFixed(2) }} INR) </span>
-                                    </label>
-                                </div>
-                            </template>
-                        </div>
-                    </div> -->
-
-
                     <!-- Optional Add-ons  Final Working -->
                     <div class="my-1">
                         <label class="form-label fs-4">Optional Add-on Accessories</label>
                         <div class="border rounded p-3 bg-light d-flex flex-wrap gap-4" id="additional-accessories">
                             <div v-for="acc in additionalAccessories" :key="acc.id"
-                                class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center" style="margin-right: 30px;">
+                                class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center"
+                                style="margin-right: 30px;">
                                 <input class="form-check-input fs-5 me-3" type="checkbox" :value="acc.id"
                                     v-model="selectedAccessories" name="accessories[]" :id="`accessory-${acc.id}`" />
                                 <label class="form-check-label w-100" :for="`accessory-${acc.id}`"
                                     style="font-size:12px;">
                                     <strong>{{ acc.name }}</strong>
-                                    <span class="text-muted"> ({{ acc.price.toFixed(2) }} INR) </span>
+                                    <span class="text-muted"> (₹ {{ acc.price.toFixed(2) }} -/month) </span>
                                 </label>
                             </div>
                         </div>
                     </div>
-
-
-
-
-                    <!-- Fee Breakup-->
-
-                    <!-- Fee Table -->
-                    <!-- <div class="card shadow-sm border-0 mt-3">
-                        <div class="card-header bg-primary text-white fw-semibold">Fee Breakup</div>
-                        <div class="card-body p-0">
-                            <table class="table table-bordered mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Fee Head</th>
-                                        <th class="text-end">Amount (INR)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(row, i) in feeBreakup" :key="i">
-                                        <td>{{ row.name }}</td>
-                                        <td class="text-end">{{ row.amount.toFixed(2) }}</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr class="fw-bold table-secondary">
-                                        <td>Total</td>
-                                        <td class="text-end">{{ totalFee.toFixed(2) }}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div> -->
-
-
-                    <!-- Fee Breakup -->
-                    <!-- <div v-if="feeBreakup">
-                        <h5 class="fw-bold mb-3">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
-
-                        <ul class="list-group mb-3">
-                            <li v-for="fee in feeBreakup.base_fees" :key="fee.name"
-                                class="list-group-item d-flex justify-content-between">
-                                <span>{{ fee.name }}</span>
-                                <span>{{ fee.amount.toLocaleString() }} INR</span>
-                            </li>
-                            <li v-for="fee in feeBreakup.one_time_fees" :key="fee.name"
-                                class="list-group-item d-flex justify-content-between text-primary">
-                                <span>{{ fee.name }} (One-time)</span>
-                                <span>{{ fee.amount.toLocaleString() }} INR</span>
-                            </li>
-                            <li v-for="acc in feeBreakup.accessories" :key="acc.name"
-                                class="list-group-item d-flex justify-content-between text-muted">
-                                <span>{{ acc.name }} (Add-on)</span>
-                                <span>{{ acc.amount.toLocaleString() }} INR</span>
-                            </li>
-                        </ul>
-
-                        <div v-if="feeBreakup.discount" class="alert alert-success py-2 px-3 mb-3">
-                            <strong>{{ feeBreakup.discount.type }}</strong> applied:
-                            {{ feeBreakup.discount.percentage }}%
-                            ({{ feeBreakup.discount.amount.toLocaleString() }} INR)
-                        </div>
-
-                        <h5 class="d-flex justify-content-between">
-                            <span>Total Payable</span>
-                            <span>{{ feeBreakup.total.toLocaleString() }} INR</span>
-                        </h5>
-                    </div> -->
-
 
                 </section>
 
@@ -375,60 +241,7 @@
 
                     <!-- Form-grid -->
                     <div class="row">
-                        <!-- Food Preference -->
-                        <!-- <div class="form-field">
-                            <label for="food">Select Food Preference
-                                <span class="text-danger">*</span></label>
-                            <select name="Food_id" id="Food" required aria-describedby="foodPreferenceError">
-                                <option selected value="">
-                                    Select Food Preference
-                                </option>
-                                <option value="1">Veg</option>
-                                <option value="2">Non-Veg</option>
-                                <option value="3">Both</option>
-                            </select>
-                            <div id="foodPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
 
-                        <!-- Bed Preference -->
-                        <!-- <div class="form-field">
-                            <label for="bed_id">Select Bed Preference
-                                <span class="text-danger">*</span></label>
-                            <select name="Bed_id" id="Bed" required aria-describedby="bedPreferenceError">
-                                <option selected value="">
-                                    Select Bed Preference
-                                </option>
-                                <option value="1">Single</option>
-                                <option value="2">Double</option>
-                                <option value="3">Triple</option>
-                            </select>
-                            <div id="bedPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <!-- Stay Duration -->
-                        <!-- <div class="form-field">
-                            <label for="month">Select Stay Duration
-                                <span class="text-danger">*</span></label>
-                            <select name="months" id="months" required aria-describedby="bedPreferenceError">
-                                <option selected value="">
-                                    Select Bed Preference
-                                </option>
-                                <option value="1">Temporary (1 Month)</option>
-                                <option value="3">Regular (3 Months)</option>
-                            </select>
-                            <div id="bedPreferenceError" class="invalid-feedback"></div>
-                        </div> -->
-
-                        <!-- Stay Duration -->
-                        <!-- <div class="form-field">
-                            <label for="months">Select Stay Duration <span class="text-danger">*</span></label>
-                            <select name="months" id="months" v-model="months" aria-describedby="monthsError">
-                                <option value="">Select Stay Duration</option>
-                                <option value="1">Temporary (1 Month)</option>
-                                <option value="3">Regular (3 Months)</option>
-                            </select>
-                            <div id="monthsError" class="invalid-feedback"></div>
-                        </div> -->
 
                         <div class="col-md-6">
                             <div class="form-header">
@@ -447,7 +260,7 @@
                                 </select>
                                 <div id="monthsError" class="invalid-feedback"></div>
                             </div>
-                            <!-- Complimentary Accessories --> 
+                            <!-- Complimentary Accessories -->
 
                             <!-- Complimentary Accessories -->
                             <div class="mb-3 mt-4">
@@ -541,24 +354,24 @@
 
                         </div>
                         <!-- Fee BreakUps -->
-                        
+
 
 
                     </div>
 
                     <!-- Agreement -->
-                <div class="form-check">
-                    <input class="form-check-input fs-4 fw-semibold" type="checkbox" id="agree" name="agree" />
-                    <label class="form-check-label fs-4" for="agree">
-                        I agree to the terms and conditions
-                    </label>
-                    <div id="agreeError" class="invalid-feedback"></div>
-                </div>
+                    <div class="form-check">
+                        <input class="form-check-input fs-4 fw-semibold" type="checkbox" id="agree" name="agree" />
+                        <label class="form-check-label fs-4" for="agree">
+                            I agree to the terms and conditions
+                        </label>
+                        <div id="agreeError" class="invalid-feedback"></div>
+                    </div>
 
                 </section>
                 <!-- Preferences End -->
 
-                
+
 
                 <!-- Submit Btn -->
                 <section class="submit-btn-registration">
@@ -578,83 +391,26 @@
 import { onMounted, ref, watch, computed } from "vue";
 
 import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const apiBase = "/api";
 
 const faculties = ref([]); // all faculties list
 const facultyId = ref(""); // selected faculty
 
-const durationMonths = ref(1); // user-selected duration
+// const durationMonths = ref(1); // user-selected duration
 const months = ref("");                 // bound to your months select
-const baseFees = ref([]);               // backend fee breakup
-const accessories = ref([]);            // fetched accessories
+// const baseFees = ref([]);               // backend fee breakup
+let accessories = ref([]);            // fetched accessories
 const selectedAccessories = ref([]);    // v-model for checkboxes
 
-
-
-
-
-
-// Load base fee breakup
-// async function loadFees(faculty) {
-//     const res = await axios.get(`/api/fees/${faculty}`);
-//     baseFees.value = res.data.data || [];
-// }
-// Fetch fee breakup when faculty changes
-// async function loadFees(faculty) {
-//     console.log(faculty);
-//     try {
-//         const res = await axios.get(`/api/feebreakups/${faculty}`);
-//         console.log(res);
-//         baseFees.value = res.data.data || [];
-//     } catch (e) {
-//         console.error("Failed to load fees", e);
-//     }
-// }
-
-// Calculate fee table with totals
-// const feeBreakup = computed(() => {
-//   const rows = [];
-
-//   // Add base fee heads
-//   baseFees.value.forEach((fee) => {
-//     rows.push({
-//       name: fee.fee_head.name,
-//       amount: fee.amount * durationMonths.value,
-//     });
-//   });
-
-//   // Add accessories if selected
-//   selectedAccessories.value.forEach((acc) => {
-//     rows.push({
-//       name: acc.name,
-//       amount: acc.price * durationMonths.value,
-//     });
-//   });
-
-//   return rows;
-// });
-
-// const totalFee = computed(() =>
-//   feeBreakup.value.reduce((sum, row) => sum + row.amount, 0)
-// );
 // accessories state
 const defaultAccessories = ref([]);
 const additionalAccessories = ref([]);
 const defaultAccessoryHeadIds = ref([]);
 const loadingAccessories = ref(false);
 const errorAccessories = ref(null);
-
-// Load faculties once
-// async function loadFaculties() {
-//     try {
-//         const res = await axios.get(`${apiBase}/faculties`);
-//         faculties.value = res.data.data || [];
-//     } catch (err) {
-//         console.error("Failed to load faculties", err);
-//     }
-// }
-
 
 const feeBreakup = ref(null);
 const errorFee = ref(null);
@@ -743,39 +499,6 @@ function onFacultyChange(e) {
     loadAccessories(facultyId.value);
 }
 
-
-// Computed fee breakup
-// const feeBreakup = computed(() => {
-//     const rows = [];
-//     const duration = parseInt(months.value) || 0;
-
-//     // Base fees
-//     baseFees.value.forEach((fee) => {
-//         rows.push({
-//             name: fee.fee_head?.name || "Fee",
-//             amount: fee.amount * duration,
-//         });
-//     });
-
-//     // Accessories
-//     selectedAccessories.value.forEach((accId) => {
-//         const acc = accessories.value.find((a) => a.accessory_head.id === accId);
-//         if (acc) {
-//             rows.push({
-//                 name: acc.accessory_head.name,
-//                 amount: parseFloat(acc.price) * duration,
-//             });
-//         }
-//     });
-
-//     return rows;
-// });
-
-// // Total
-// const totalFee = computed(() =>
-//     feeBreakup.value.reduce((sum, row) => sum + row.amount, 0)
-// );
-
 // Validation rules
 const rules = {
     scholar_number: {
@@ -797,7 +520,7 @@ const rules = {
     faculty_id: { required: true, message: "Select a faculty" },
     department_id: { required: true, message: "Select a department" },
     course_id: { required: true, message: "Select a course" },
-    gender_id: { required: true, message: "Select a gender" },
+    gender: { required: true, message: "Select a gender" },
     fee_waiver: { required: false },
     attachment: { required: false },
     fathers_name: { required: true, message: "Father's Name is required" },
@@ -1007,93 +730,257 @@ onMounted(() => {
         }
     });
 
+    // // Form submission
+    // form.addEventListener("submit", async (e) => {
+    //     e.preventDefault();
+    //     clearErrors();
+    //     if (errorMessage) errorMessage.classList.add("d-none");
+    //     if (successContainer) successContainer.classList.add("d-none");
+
+    //     let hasError = false;
+    //     Object.keys(rules).forEach((field) => {
+    //         const el = document.getElementById(field);
+    //         if (el) {
+    //             const err = validateField(field, el);
+    //             showError(field, err);
+    //             if (err && !hasError) hasError = true;
+    //         }
+    //     });
+
+    //     if (hasError) {
+    //         scrollToFirstError();
+    //         return;
+    //     }
+
+    //     submitBtn.disabled = true;
+    //     if (loading) loading.classList.remove("d-none");
+
+    //     try {
+    //       const formData = new FormData(form);
+    //       console.log(formData);
+    //       await axios.post(`${apiBase}/guest/register`, formData);
+
+    //       if (successContainer) successContainer.classList.remove("d-none");
+    //       form.reset();
+    //     } catch (err) {
+    //       if (err.response && err.response.status === 422) {
+    //         const errors = err.response.data.errors;
+    //         Object.keys(errors).forEach(field => {
+    //           const el = document.getElementById(field);
+    //           if (el) showError(field, errors[field][0]);
+    //         });
+    //         scrollToFirstError();
+    //       } else if (errorMessage && errorMessageText) {
+    //         errorMessage.classList.remove("d-none");
+    //         errorMessageText.textContent = "Something went wrong. Try again.";
+    //       }
+    //     } finally {
+    //       submitBtn.disabled = false;
+    //       if (loading) loading.classList.add("d-none");
+    //     }
+
+    //     // try {
+    //     //     const formData = new FormData(form);
+    //     //     colosole.log ( res );
+    //     //     const { data } = await axios.post(
+    //     //         `${apiBase}/guest/register`,
+    //     //         formData
+    //     //     );
+
+    //     //     // Success handling
+    //     //     successContainer.classList.remove("d-none");
+    //     //     successContainer.innerHTML = `
+    //     //   <div class="alert alert-success">
+    //     //     Registration successful! Redirecting to your guest panel...
+    //     //   </div>
+    //     // `;
+
+    //     //     // Optional: reset form after short delay
+    //     //     setTimeout(() => {
+    //     //         window.location.href = "/guest/panel"; // replace with actual guest panel route
+    //     //     }, 2500);
+    //     // } catch (error) {
+    //     //     // Server-side validation errors
+    //     //     if (error.response && error.response.status === 422) {
+    //     //         const errors = error.response.data.errors;
+    //     //         Object.keys(errors).forEach((field) => {
+    //     //             showError(field, errors[field][0]);
+    //     //         });
+    //     //         scrollToFirstError(); // scroll to first error
+    //     //     } else {
+    //     //         // Generic error
+    //     //         errorMessage.classList.remove("d-none");
+    //     //         errorMessageText.textContent =
+    //     //             "Something went wrong. Please check your input.";
+    //     //     }
+
+    //     //     // Keep all entered form data intact
+    //     // } finally {
+    //     //     submitBtn.disabled = false;
+    //     //     loading.classList.add("d-none");
+    //     // }
+    // });
+
+    // Form submission
+    // form.addEventListener("submit", async (e) => {
+    //     e.preventDefault();
+    //     clearErrors();
+
+    //     // Hide old messages
+    //     if (errorMessage) errorMessage.classList.add("d-none");
+    //     if (successContainer) successContainer.classList.add("d-none");
+
+    //     // Validate client-side rules
+    //     let hasError = false;
+    //     Object.keys(rules).forEach((field) => {
+    //         const el = document.getElementById(field);
+    //         if (el) {
+    //             const err = validateField(field, el);
+    //             showError(field, err);
+    //             if (err && !hasError) hasError = true;
+    //         }
+    //     });
+
+    //     if (hasError) {
+    //         scrollToFirstError();
+    //         return;
+    //     }
+
+    //     // Disable submit + show loading
+    //     submitBtn.disabled = true;
+    //     if (loading) loading.classList.remove("d-none");
+
+    //     try {
+    //         const formData = new FormData(form);
+
+
+
+    //         // // Debugging: check values being sent
+    //         // for (const [key, value] of formData.entries()) {
+    //         //     console.log(key, value);
+    //         // }
+
+    //         // Collect accessories into array manually
+    //         // const accessories = formData.getAll("accessories[]");
+    //         // formData.delete("accessories[]"); // clear old entries
+    //         // formData.append("accessories", JSON.stringify(accessories)); // send as JSON array
+
+    //         // console.log("Submitting payload:", Object.fromEntries(formData));
+
+    //         const { data } = await axios.post(`${apiBase}/guest`, formData);
+
+    //         if (data.success) {
+    //             successContainer.classList.remove("d-none");
+    //             successContainer.innerHTML = `
+    //           <div class="alert alert-success">
+    //             Registration successful! Redirecting to your guest panel...
+    //           </div>
+    //         `;
+
+    //             // Redirect safely after short delay
+    //             setTimeout(() => {
+    //                 window.location.href = "/guest/panel";
+    //             }, 2000);
+    //         } else {
+    //             throw new Error("Unexpected server response.");
+    //         }
+    //     } catch (err) {
+    //         // Server-side validation errors
+    //         if (err.response && err.response.status === 422) {
+    //             const errors = err.response.data.errors;
+    //             Object.keys(errors).forEach((field) => {
+    //                 showError(field, errors[field][0]);
+    //             });
+    //             scrollToFirstError();
+    //         } else {
+    //             // Generic failure
+    //             if (errorMessage && errorMessageText) {
+    //                 errorMessage.classList.remove("d-none");
+    //                 errorMessageText.textContent =
+    //                     "Something went wrong. Please try again later.";
+    //             }
+    //         }
+
+    //         // ✅ Don’t reset the form — user data stays intact
+    //     } finally {
+    //         // Re-enable submit + hide loader
+    //         submitBtn.disabled = false;
+    //         if (loading) loading.classList.add("d-none");
+    //     }
+    // });
+
     // Form submission
     form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        clearErrors();
-        if (errorMessage) errorMessage.classList.add("d-none");
-        if (successContainer) successContainer.classList.add("d-none");
+    e.preventDefault();
+    clearErrors();
+    if (errorMessage) errorMessage.classList.add("d-none");
+    if (successContainer) successContainer.classList.add("d-none");
 
-        let hasError = false;
-        Object.keys(rules).forEach((field) => {
-            const el = document.getElementById(field);
-            if (el) {
-                const err = validateField(field, el);
-                showError(field, err);
-                if (err && !hasError) hasError = true;
-            }
-        });
-
-        if (hasError) {
-            scrollToFirstError();
-            return;
-        }
-
-        submitBtn.disabled = true;
-        if (loading) loading.classList.remove("d-none");
-
-        // try {
-        //   const formData = new FormData(form);
-        //   await axios.post(`${apiBase}/guest/register`, formData);
-
-        //   if (successContainer) successContainer.classList.remove("d-none");
-        //   form.reset();
-        // } catch (err) {
-        //   if (err.response && err.response.status === 422) {
-        //     const errors = err.response.data.errors;
-        //     Object.keys(errors).forEach(field => {
-        //       const el = document.getElementById(field);
-        //       if (el) showError(field, errors[field][0]);
-        //     });
-        //     scrollToFirstError();
-        //   } else if (errorMessage && errorMessageText) {
-        //     errorMessage.classList.remove("d-none");
-        //     errorMessageText.textContent = "Something went wrong. Try again.";
-        //   }
-        // } finally {
-        //   submitBtn.disabled = false;
-        //   if (loading) loading.classList.add("d-none");
-        // }
-
-        try {
-            const formData = new FormData(form);
-            const { data } = await axios.post(
-                `${apiBase}/guest/register`,
-                formData
-            );
-
-            // Success handling
-            successContainer.classList.remove("d-none");
-            successContainer.innerHTML = `
-          <div class="alert alert-success">
-            Registration successful! Redirecting to your guest panel...
-          </div>
-        `;
-
-            // Optional: reset form after short delay
-            setTimeout(() => {
-                window.location.href = "/guest/panel"; // replace with actual guest panel route
-            }, 2500);
-        } catch (error) {
-            // Server-side validation errors
-            if (error.response && error.response.status === 422) {
-                const errors = error.response.data.errors;
-                Object.keys(errors).forEach((field) => {
-                    showError(field, errors[field][0]);
-                });
-                scrollToFirstError(); // scroll to first error
-            } else {
-                // Generic error
-                errorMessage.classList.remove("d-none");
-                errorMessageText.textContent =
-                    "Something went wrong. Please check your input.";
-            }
-
-            // Keep all entered form data intact
-        } finally {
-            submitBtn.disabled = false;
-            loading.classList.add("d-none");
+    let hasError = false;
+    Object.keys(rules).forEach((field) => {
+        const el = document.getElementById(field);
+        if (el) {
+            const err = validateField(field, el);
+            showError(field, err);
+            if (err && !hasError) hasError = true;
         }
     });
+
+    if (hasError) {
+        scrollToFirstError();
+        return;
+    }
+
+    submitBtn.disabled = true;
+    if (loading) loading.classList.remove("d-none");
+
+    try {
+        const formData = new FormData(form);
+
+        // Collect and normalize accessories into one array
+        const accessories = formData.getAll("accessories[]");
+        formData.delete("accessories[]");
+        formData.append("accessories", JSON.stringify(accessories));
+
+        console.log("Submitting payload:", Object.fromEntries(formData));
+
+        const { data } = await axios.post(`${apiBase}/guests`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        console.log(data);
+
+        // Success UI
+        if (successContainer) {
+            successContainer.classList.remove("d-none");
+            successContainer.innerHTML = `
+              <div class="alert alert-success">
+                Registration successful! Redirecting...
+              </div>`;
+        }
+
+        setTimeout(() => {
+            window.location.href = "/guest/registration-status";
+        }, 2000);
+    } catch (err) {
+        if (err.response && err.response.status === 422) {
+            const errors = err.response.data.errors;
+            Object.keys(errors).forEach((field) => {
+                const el = document.getElementById(field);
+                if (el) showError(field, errors[field][0]);
+            });
+            scrollToFirstError();
+        } else if (errorMessage && errorMessageText) {
+            errorMessage.classList.remove("d-none");
+            errorMessageText.textContent = "Something went wrong. Try again.";
+        }
+    } finally {
+        submitBtn.disabled = false;
+        if (loading) loading.classList.add("d-none");
+    }
+});
+
+
+
 });
 </script>

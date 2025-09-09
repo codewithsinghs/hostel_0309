@@ -458,7 +458,7 @@
                         </div>
                     </div> -->
 
-                 
+
                     <!-- Fee Breakup -->
                     <!-- <div v-if="feeBreakup">
                         <h5 class="fw-bold mb-3">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
@@ -494,57 +494,60 @@
                     </div> -->
 
                     <div v-if="feeBreakup" class="card shadow-sm mt-4">
-  <div class="card-header bg-primary text-white">
-    <h5 class="mb-0">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
-  </div>
-  <div class="card-body p-0">
-    <table class="table table-bordered mb-0">
-      <thead class="table-light">
-        <tr>
-          <th>Fee Component</th>
-          <th>Stay Duration</th>
-          <th class="text-end">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Base Fees -->
-        <tr v-for="fee in feeBreakup.base_fees" :key="fee.name">
-          <td>{{ fee.name }}</td>
-          <td>{{ feeBreakup.stay_duration }}</td>
-          <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
-        </tr>
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Fee Breakup ({{ feeBreakup.stay_duration }})</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fee Component</th>
+                                        <th>Stay Duration</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Base Fees -->
+                                    <tr v-for="fee in feeBreakup.base_fees" :key="fee.name">
+                                        <td>{{ fee.name }}</td>
+                                        <td>{{ feeBreakup.stay_duration }}</td>
+                                        <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
+                                    </tr>
 
-        <!-- One-time Fees -->
-        <tr v-for="fee in feeBreakup.one_time_fees" :key="fee.name" class="text-primary">
-          <td>{{ fee.name }} (One-time)</td>
-          <td>One-time</td>
-          <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
-        </tr>
+                                    <!-- One-time Fees -->
+                                    <tr v-for="fee in feeBreakup.one_time_fees" :key="fee.name" class="text-primary">
+                                        <td>{{ fee.name }} (One-time)</td>
+                                        <td>One-time</td>
+                                        <td class="text-end">₹ {{ parseFloat(fee.amount).toFixed(2) }}</td>
+                                    </tr>
 
-        <!-- Accessories -->
-        <tr v-for="acc in feeBreakup.accessories" :key="acc.name" class="text-muted">
-          <td>{{ acc.name }} (Add-on)</td>
-          <td>{{ feeBreakup.stay_duration }}</td>
-          <td class="text-end">₹ {{ parseFloat(acc.amount).toFixed(2) }}</td>
-        </tr>
+                                    <!-- Accessories -->
+                                    <tr v-for="acc in feeBreakup.accessories" :key="acc.name" class="text-muted">
+                                        <td>{{ acc.name }} (Add-on)</td>
+                                        <td>{{ feeBreakup.stay_duration }}</td>
+                                        <td class="text-end">₹ {{ parseFloat(acc.amount).toFixed(2) }}</td>
+                                    </tr>
 
-        <!-- Discount -->
-        <tr v-if="feeBreakup.discount" class="table-success">
-          <td colspan="2">
-            <strong>{{ feeBreakup.discount.type }}</strong> ({{ feeBreakup.discount.percentage }}% Off)
-          </td>
-          <td class="text-end">₹ {{ parseFloat(feeBreakup.discount.amount).toFixed(2) }}</td>
-        </tr>
-      </tbody>
-      <tfoot class="table-dark text-white">
-        <tr>
-          <td colspan="2" class="text-end fw-bold">Total Payable</td>
-          <td class="text-end fw-bold">₹ {{ parseFloat(feeBreakup.total).toFixed(2) }}</td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-</div>
+                                    <!-- Discount -->
+                                    <tr v-if="feeBreakup.discount" class="table-success">
+                                        <td colspan="2">
+                                            <strong>{{ feeBreakup.discount.type }}</strong> ({{
+                                            feeBreakup.discount.percentage }}% Off)
+                                        </td>
+                                        <td class="text-end">₹ {{ parseFloat(feeBreakup.discount.amount).toFixed(2) }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-dark text-white">
+                                    <tr>
+                                        <td colspan="2" class="text-end fw-bold">Total Payable</td>
+                                        <td class="text-end fw-bold">₹ {{ parseFloat(feeBreakup.total).toFixed(2) }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
 
                     <!-- Agreement -->
                     <div class="form-check">
