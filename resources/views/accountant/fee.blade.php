@@ -17,9 +17,6 @@
                         <select name="fee_head_id" id="fee_head_id" class="form-select form-select-lg" required>
                             <option value="">Select Fee Head</option>
                         </select>
-                        <button type="button" class="btn btn-outline-secondary btn-lg" id="addFeeHeadBtn">
-                            +
-                        </button>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -47,6 +44,8 @@
                             <th>S.No</th>
                             <th>Fee Head Name</th>
                             <th>Amount</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
                         </tr>
                     </thead>
                     <tbody id="activeFeesTableBody">
@@ -58,96 +57,16 @@
     </div>
 </div>
 
-<div class="modal fade" id="addFeeHeadModal" tabindex="-1" aria-labelledby="addFeeHeadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addFeeHeadModalLabel">Add Fee Head</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="feeHeadFormModal" class="g-3">
-                    <div class="col-12">
-                        <label for="name" class="form-label">Fee Head Name</label>
-                        <input type="text" name="name" id="name" class="form-control form-control-lg" placeholder="Enter Fee Head Name" required>
-                        
-                    </div>
-                </form>
-                <div id="feeHeadMessageModal" class="mt-3"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-success" id="createFeeHeadBtnModal">Create</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
-    let feeHeadMap = {}; // Global map to store fee head IDs and names
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Load fee heads first, then load active fees
-        loadFeeHeads();
-
-        const addFeeHeadBtn = document.getElementById('addFeeHeadBtn');
-        const addFeeHeadModalEl = document.getElementById('addFeeHeadModal');
-        const feeHeadFormModal = document.getElementById('feeHeadFormModal');
-        const createFeeHeadBtnModal = document.getElementById('createFeeHeadBtnModal');
-        // Initialize Bootstrap Modal instance
-        const modalInstance = new bootstrap.Modal(addFeeHeadModalEl);
-
-        // Event listener to show the modal when the '+' button is clicked
-        addFeeHeadBtn.addEventListener('click', () => {
-            modalInstance.show();
-        });
-
-        // Event listener for creating a new fee head from the modal
-        createFeeHeadBtnModal.addEventListener('click', async (e) => {
-            e.preventDefault(); // Prevent default form submission
-            const name = document.getElementById('name').value;
-            
-            try {
-                const response = await fetch('/api/accountant/fee-heads', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}", // Laravel CSRF token
-                        'token': localStorage.getItem('token'),
-                        'auth-id': localStorage.getItem('auth-id')
-                    },
-                    body: JSON.stringify({ name })
-                });
-
-                const data = await response.json();
-                const messageDiv = document.getElementById('feeHeadMessageModal');
-
-                // Check for 'success' property in the API response and HTTP status
-                if (response.ok && data.success === true) { 
-                    messageDiv.innerHTML = `<div class="alert alert-success">${data.message || 'Fee head added successfully!'}</div>`;
-                    feeHeadFormModal.reset(); // Clear the form
-                    loadFeeHeads(); // Reload fee heads to update dropdown and then the active fees table
-                } else {
-                    // Handle errors from the API response
-                    let errors = data.errors ? Object.values(data.errors).flat().join('<br>') : data.message || 'An unknown error occurred.';
-                    messageDiv.innerHTML = `<div class="alert alert-danger">${errors}</div>`;
-                }
-            } catch (error) {
-                // Catch network or parsing errors
-                document.getElementById('feeHeadMessageModal').innerHTML = `<div class="alert alert-danger">Something went wrong. Please try again.</div>`;
-                console.error('Error adding fee head:', error);
-            }
-        });
-
-        // Prevent default submission for the modal form (button handles submission)
-        feeHeadFormModal.addEventListener('submit', function (e) {
-            e.preventDefault();
-        });
+    let feeHeadMap = {}; // To map fee_head_id to fee head name
+    document.addEventListener("DOMContentLoaded", function() {
+        loadFeeHeads(); // Load fee heads when the DOM is fully loaded
     });
-
     /**
-     * Fetches fee heads from the API, populates the dropdown, and then loads active fees.
+     * Fetches fee heads from the API and populates the fee head dropdown.
+     * Also populates the feeHeadMap for later use in displaying active fees.
      */
+
     async function loadFeeHeads() {
         try {
             const response = await fetch('/api/accountant/fee-heads', {
@@ -210,7 +129,9 @@
                     <td>${index + 1}</td>
                     <td>${feeHeadMap[fee.fee_head_id] || 'Unknown Fee Head'}</td>
                     <td>${fee.amount}</td>
-                `;
+                    <td>${new Date(fee.from_date).toLocaleDateString()}</td>
+                    <td>${fee.to_date ? new Date(fee.to_date).toLocaleDateString() : 'Ongoing'}</td>    
+                    `;
                 tbody.appendChild(row);
             });
         } catch (error) {
@@ -224,7 +145,6 @@
         e.preventDefault(); // Prevent default form submission
         const feeHeadId = document.getElementById('fee_head_id').value;
         const amount = document.getElementById('amount').value;
-        
         try {
             const response = await fetch('/api/admin/addOrUpdateFees', {
                 method: 'POST',

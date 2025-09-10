@@ -9,13 +9,15 @@ class Accessory extends Model
 {
     use HasFactory;
 
-    protected $table = 'accessories';
+    protected $table = 'accessory';
+
     
     protected $casts = [
         'from_date' => 'date',
         'to_date' => 'date',
     ];
     
+
     protected $fillable = [
         'accessory_head_id',
         'price',
@@ -29,7 +31,7 @@ class Accessory extends Model
     // Relationship: Accessory belongs to AccessoryHead
     public function accessoryHead()
     {
-        return $this->belongsTo(AccessoryHead::class);
+        return $this->belongsTo(AccessoryHead::class,'accessory_head_id');
     }
 
     // (Optional) created_by user relationship if needed

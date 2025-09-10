@@ -1,5 +1,4 @@
 <?php
-
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Payment;
@@ -39,17 +38,12 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RoomChangeController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\UniversityController;
-use App\Http\Controllers\Api\V1\BlogController;
-use App\Http\Controllers\Api\V1\PostController;
-use App\Http\Controllers\Api\V1\EventController;
 use App\Http\Controllers\FeeExceptionController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\AccessoryHeadController;
-use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Apis\V1\LoginController;
-use App\Http\Controllers\Vue\Api\NAuthController;
 use App\Http\Controllers\StudentAccessoryController;
 use App\Http\Controllers\RoomChangeMessageController;
 
@@ -70,11 +64,10 @@ use App\Http\Controllers\RoomChangeMessageController;
 //     return response()->json(['message' => 'Welcome Admin']);
 // });
 
-Route::get('/faculties/active', [FacultiesController::class, 'getActiveFaculties']);
-Route::get('/faculties/{faculty_id}/departments', [DepartmentController::class, 'getActiveDepartments']);
-Route::get('/departments/{department_id}/courses', [CourseController::class, 'getActiveCourses']);
-Route::get('/feebreakups/{faculty}', [FeeController::class, 'getFeeBreakUps']);
-Route::post('/fee/calculate', [FeeController::class, 'calculate']);
+Route::get('/faculties/active',[FacultiesController::class, 'getActiveFaculties']);
+Route::get('/faculties/{faculty_id}/departments',[DepartmentController::class, 'getActiveDepartments']);
+Route::get('/departments/{department_id}/courses',[CourseController::class, 'getActiveCourses']);
+
 
 Route::post('/login', [AuthController::class, 'login']);
 // Guest Routes 
@@ -84,34 +77,31 @@ Route::post('/guest/login', [LoginController::class, 'guestLogin'])->name('guest
 Route::get('accessories/active/{facultyId}', [AccessoryController::class, 'getPublicActiveAccessories']);
 
 //Guest API Auth
-Route::middleware(['guest_api_auth'])->group(function () {
+Route::middleware(['guest_api_auth'])->group(function(){
     Route::get('/guest/profile', [GuestController::class, 'getGuestProfile']);
     Route::post('guest-authentication', [LoginController::class, 'AuthenticateGuests']);
-    Route::get('/guest/approved-rejected-guest', [GuestController::class, 'getApprovedOrRejectedGuests']);
+    Route::get('/guest/approved-rejected-guest', [GuestController::class, 'getApprovedOrRejectedGuests']);    
     Route::get('/guest/total-amount', [GuestController::class, 'getGuestTotalAmount']);
     Route::get('/guests/paid', [GuestController::class, 'getPaidGuests']);
     Route::get('/guests/pending', [GuestController::class, 'pendingGuests']);
-    Route::get('guests/accessories/active', [AccessoryController::class, 'guestActiveAccessories']);
-
+    Route::get('guests/accessories/active', [AccessoryController::class, 'getGuestActiveAccessories']);
+        
     Route::post('guests/guest-payments', [PaymentController::class, 'guestPayment']); // Guest makes payment
-
-    Route::post('payments/initiate', [GuestController::class, 'initiateGuestPayment'])->name('payments.initiate');
-    Route::get('/guests/payment/status', [PaytmController::class, 'PaymentStatus']);
 });
 
-Route::post('admin/login', [LoginController::class, 'adminLogin']);
-Route::post('logout', [LoginController::class, 'logout']);
+    Route::post('admin/login', [LoginController::class, 'adminLogin']);
+    Route::post('logout', [LoginController::class, 'logout']);
 
-Route::middleware(['admin_api_auth'])->group(function () {
-
+Route::middleware(['admin_api_auth'])->group(function(){
+    
     Route::post('authenticate-users', [LoginController::class, 'AuthenticateUsers']);
 
     //Super Admin Routes
-    Route::prefix('superadmin')->group(function () {
+    Route::prefix('superadmin')->group(function(){
 
         Route::get('profile', [AdminController::class, 'getAdminProfile']);
 
-        //Super Admin Routes    
+                //Super Admin Routes    
         Route::post('universities/create', [UniversityController::class, 'store']);
         Route::get('universities', [UniversityController::class, 'index']);
         Route::put('universities/{id}', [UniversityController::class, 'update']);
@@ -126,7 +116,7 @@ Route::middleware(['admin_api_auth'])->group(function () {
     Route::prefix('hod')->group(function () {
         Route::get('leave-requests', [LeaveRequestController::class, 'allLeaveRequests']);
         Route::patch('leave-requests/{id}/hod-approve', [LeaveRequestController::class, 'hodApprove']);
-        Route::patch('leave-requests/{id}/hod-deny', [LeaveRequestController::class, 'hodDeny']);
+        Route::patch('leave-requests/{id}/hod-deny', [LeaveRequestController::class, 'hodDeny']);        
     });
     // Admin Routes
     Route::prefix('admin')->group(function () {
@@ -152,7 +142,7 @@ Route::middleware(['admin_api_auth'])->group(function () {
         Route::put('departments/{id}', [DepartmentController::class, 'update']);
         Route::delete('departments/{id}', [DepartmentController::class, 'destroy']); // Delete department
 
-        // Courses Apis
+                // Courses Apis
         Route::get('courses', [CourseController::class, 'index']);
         Route::post('courses/create', [CourseController::class, 'store']);
         Route::get('courses/{id}', [CourseController::class, 'show']);
@@ -190,7 +180,8 @@ Route::middleware(['admin_api_auth'])->group(function () {
         Route::get('/guests/status', [GuestController::class, 'guestsStatus']);
         Route::post('/approve-guest', [AdminController::class, 'guestApproval']); // Send payment request
         Route::get('/guest/{guest}/fee-exception-details', [FeeExceptionController::class, 'getFeeExceptionDetailsForEdit']);
-
+        Route::get('/paid-guests', [GuestController::class, 'getPaidGuests']);
+    
         //For Waiver Guests
         // Route::post('/approved-waiver', [FeeExceptionController::class, 'adminWaiverApproved']); // Send payment request
         Route::post('/modify-waiver/payments', [FeeExceptionController::class, 'store']); // Send payment request
@@ -284,7 +275,7 @@ Route::middleware(['admin_api_auth'])->group(function () {
     });
 
     Route::prefix('accountant')->group(function () {
-        // Accountant Routes
+    // Accountant Routes
         Route::get('checkout-requests', [CheckoutController::class, 'getAllCheckoutRequests']);
         Route::put('checkout/account-approval/{id}', [CheckoutController::class, 'accountApproval']); // Accounts approval
         Route::post('update-guest-status', [FeeExceptionController::class, 'updateGuestStatusWithRemark']);
@@ -298,28 +289,35 @@ Route::middleware(['admin_api_auth'])->group(function () {
         Route::post('/residents/{resident_id}/accessories/{accessory_id}/pay', [StudentAccessoryController::class, 'payAccessory']);
         Route::get('/payments/resident/{id}', [PaymentController::class, 'getPaymentsByResident']);
 
-        //Fee
+                //Fee
         Route::get('/fees', [FeeController::class, 'getAllFees']);
         Route::get('/activeFees', [FeeController::class, 'getAllActiveFees']);
         Route::post('/admin/addOrUpdateFees', [FeeController::class, 'createOrUpdate']);
         Route::get('/fee-heads', [FeeHeadController::class, 'index']);
         //Fee head
+        // Route::post('/fee-heads/create', [FeeHeadController::class, 'create']);
         Route::post('/fee-heads', [FeeHeadController::class, 'store']);
+        Route::get('/fee-heads/{id}', [FeeHeadController::class, 'show']);
         Route::put('/fee-heads/{id}', [FeeHeadController::class, 'update']);
+        Route::delete('/fee-heads/{id}', [FeeHeadController::class, 'destroy']);
 
         Route::get('/guest/{guest}/fee-exception', [FeeExceptionController::class, 'getFeeExceptionDetailsForEdit']);
 
         // Fine Routes
         Route::post('set-fine-amount', [FineController::class, 'accountantSetFineAmount']);
         Route::get('view-fine-details', [FineController::class, 'viewAllFineDetails']);
+        Route::get('accessories/active', [AccessoryController::class, 'getActiveAccessories']);
+        
+
     });
 
     Route::prefix('admission')->group(function () {
         Route::put('/verify-guest/{guest_id}', [AdminController::class, 'guestUpdateAndVerification']); // Send payment request
         Route::get('accessories/active', [AccessoryController::class, 'getActiveAccessories']);
-        Route::get('/faculties/active', [FacultiesController::class, 'getActiveFaculties']);
-        Route::get('/faculties/{faculty_id}/departments', [DepartmentController::class, 'getActiveDepartments']);
-        Route::get('/departments/{department_id}/courses', [CourseController::class, 'getActiveCourses']);
+        
+        Route::get('/faculties/active',[FacultiesController::class, 'getActiveFaculties']);
+        Route::get('/faculties/{faculty_id}/departments',[DepartmentController::class, 'getActiveDepartments']);
+        Route::get('/departments/{department_id}/courses',[CourseController::class, 'getActiveCourses']);
     });
 
     Route::prefix('resident')->group(function () {
@@ -333,7 +331,7 @@ Route::middleware(['admin_api_auth'])->group(function () {
         Route::get('room-change/requests', [RoomChangeController::class, 'getRoomChangeRequests']);
         Route::get('room-change/requests/{id}', [RoomChangeController::class, 'getRoomChangeRequestsById']);
         Route::get('{residentId}/room-change-requests', [RoomChangeController::class, 'getRoomChangeRequestsByResidentId']);
-
+        
         //Messages in Room Change Requests
         Route::get('room-change/all-messages/{request_id}', [RoomChangeMessageController::class, 'getMessages']);
         Route::post('room-change/message/{request_id}', [RoomChangeMessageController::class, 'sendMessage']);
@@ -349,18 +347,21 @@ Route::middleware(['admin_api_auth'])->group(function () {
         Route::post('room-change/confirm-by-resident/{request_id}', [RoomChangeController::class, 'confirmRoomChange']);
 
         Route::get('accessories/active', [AccessoryController::class, 'getActiveAccessories']);
-
+        
         //Accessory Routes
         // Route::get('accessories', [AccessoryController::class, 'ResidentAccessories']);
         Route::post('accessories', [StudentAccessoryController::class, 'addAccessory']); // Resident Add Accessory
         Route::get('accessories-pending-payments', [PaymentController::class, 'getAccessoryPendingPayments']);
-        Route::post('accessories/{accessory_id}/pay', [StudentAccessoryController::class, 'payAccessory']);
+        Route::post('invoices/{invoice_id}/pay', [StudentAccessoryController::class, 'payAccessory']);
+        Route::get('invoices/{invoice_id}', [StudentAccessoryController::class, 'getResidentInvoices']);
 
         Route::post('checkout/request', [CheckoutController::class, 'requestCheckout']);
 
         Route::get('checkout-status', [CheckoutController::class, 'getCheckoutStatus']);
         Route::get('checkout-logs', [CheckoutController::class, 'getCheckoutLogs']);
         Route::get('profile', [ResidentController::class, 'getResidentProfile']);
+
+        Route::get('/pending-payments', [PaymentController::class, 'getPendingPayments']);
 
         Route::prefix('grievances')->group(function () {
             // Submit a grievance
@@ -378,7 +379,9 @@ Route::middleware(['admin_api_auth'])->group(function () {
             // Close grievance by resident (final resolution)
             Route::put('/close/{id}', [GrievanceController::class, 'closeGrievance']);
         });
+
     });
+
 });
 
 
@@ -514,39 +517,39 @@ Route::post('/send-sms', function (Request $request) {
 
 
 
-// //AWS Mail Service for test
-// Route::post('/send-mail', function (Request $request) {
-//     $validator = Validator::make($request->all(), [
-//         'email' => 'required|email',
-//         'subject' => 'required|string',
-//         'name' => 'required|string',
-//         'body' => 'required|string',
-//     ]);
+//AWS Mail Service for test
+Route::post('/send-mail', function (Request $request) {
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'subject' => 'required|string',
+        'name' => 'required|string',
+        'body' => 'required|string',
+    ]);
 
-//     if ($validator->fails()) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Validation failed',
-//             'errors' => $validator->errors()
-//         ], 422);
-//     }
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
+    }
 
-//     $response = MailService::send(
-//         $request->email,
-//         $request->subject,
-//         'emails.hostel_welcome',
-//         [
-//             'name' => $request->name,
-//             'body' => $request->body
-//         ]
-//     );
+    $response = MailService::send(
+        $request->email,
+        $request->subject,
+        'emails.hostel_welcome',
+        [
+            'name' => $request->name,
+            'body' => $request->body
+        ]
+    );
 
-//     return response()->json([
-//         'success' => $response['success'],
-//         'message' => $response['message'] ?? 'Mail operation done',
-//         'data' => $response
-//     ]);
-// });
+    return response()->json([
+        'success' => $response['success'],
+        'message' => $response['message'] ?? 'Mail operation done',
+        'data' => $response
+    ]);
+});
 
 
 
@@ -565,71 +568,10 @@ Route::prefix('notifications')->group(function () {
 });
 
 
-Route::get('/accessories', [AccessoryController::class, 'index']);
-Route::post('/register', [NAuthController::class, 'register']);
-Route::post('/login', [NAuthController::class, 'login']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/ndashboard', [NAuthController::class, 'dashboard']);
-    Route::post('/logout', [NAuthController::class, 'logout']);
-
-     Route::patch('/users/{user}/toggle-status', [NAuthController::class, 'toggleStatus']);
-    Route::delete('/users/{user}', [NAuthController::class, 'destroy']);
-    Route::get('/users/{user}', [NAuthController::class, 'show']);
-    Route::post('/users/store', [NAuthController::class, 'store']);
-
-    
-    // Route::prefix('admin')->group(function () {
-    //     Route::apiResource('reports', ReportController::class);
-    //     Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->name('admin.reports.toggle-status');
-    //     Route::apiResource('blogs', BlogController::class);
-    //     Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
-    //     Route::apiResource('posts', PostController::class);
-    //     Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
-    //     Route::apiResource('events', EventController::class);
-    //     Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
-    
-
-    // });
 
 
-    Route::prefix('admin')->group(function () {
+// Added ON 10092025
+Route::post('guests/guest-payments', [PaymentController::class, 'guestPayment']); // Guest makes payment
 
-        Route::middleware(['role:admin|editor|viewer'])->group(function () {
-            Route::apiResource('reports', ReportController::class)->middleware('permission:reports.view');
-            Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->middleware('permission:reports.toggle-status');
-    
-            Route::apiResource('blogs', BlogController::class);
-            Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
-    
-            Route::apiResource('posts', PostController::class);
-            Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
-    
-            Route::apiResource('events', EventController::class);
-            Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
-        });
-    });
-    
-
-});
-
-// Route::middleware(['auth:sanctum', 'api.role:admin'])->prefix('admin')->group(function () {
-//     Route::get('reports', [ReportController::class, 'index']);
-//     Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus']);
-//     Route::apiResource('blogs', BlogController::class);
-// });
-// // Route::middleware(['auth:sanctum', 'api.role:admin|manager'])->get('/dashboard', [DashboardController::class, 'index']);
-// Route::middleware(['auth:sanctum', 'api.permission:reports.view'])
-//     ->get('/admin/reports', [ReportController::class, 'index']);
-
-
-// Route::apiResource('/admin/blogs', BlogController::class);
-// Route::middleware('auth:sanctum')->get('/ndashboard', [NAuthController::class, 'dashboard']);
-// Route::middleware('auth:sanctum')->get('/ndashboard', function (Request $request) {
-//     return response()->json([
-//         'status' => true,
-//         'user'   => $request->user(),
-//     ]);
-// });
-
-// Route::get('/ndashboard', [NAuthController::class, 'dashboard'])->middleware('auth:sanctum');
+    Route::post('payments/initiate', [GuestController::class, 'initiateGuestPayment'])->name('payments.initiate');
+    Route::get('/guests/payment/status', [PaytmController::class, 'PaymentStatus']);

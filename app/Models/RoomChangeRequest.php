@@ -26,6 +26,11 @@ class RoomChangeRequest extends Model
         return $this->belongsTo(Resident::class, 'resident_id');
     }
 
+    public function bedAssignmentHistory()
+    {
+        return $this->belongsTo(BedAssignmentHistory::class);
+    }
+
     public function Bed()
     {
         return $this->belongsTo(Bed::class);

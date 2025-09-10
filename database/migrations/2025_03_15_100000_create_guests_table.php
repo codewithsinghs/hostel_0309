@@ -11,40 +11,26 @@ class CreateGuestsTable extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->string('scholar_number')->unique();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('mobile')->nullable();
-            $table->string('password')->nullable();
-            $table->string('gender')->nullable();
-
-            $table->string('fathers_name')->nullable();
-            $table->string('mothers_name')->nullable();
-             $table->string('local_guardian_name')->nullable();
-            $table->string('guardian_contact')->nullable();
-
-            $table->string('parent_contact')->nullable();
-            $table->string('emergency_contact');
+            $table->string('gender');
+            $table->string('scholar_no')->unique();
+            $table->string('fathers_name');
+            $table->string('mothers_name');
             $table->unsignedTinyInteger('months')->default(3)->comment('Duration of stay in months');
             $table->unsignedTinyInteger('days')->nullable(); //addded
-           
-            $table->boolean('fee_waiver')->default(false);
+            $table->string('local_guardian_name');
             $table->string('attachment_path')->nullable();
             $table->text('remarks')->nullable();
             $table->text('admin_remarks')->nullable();
-            
-            $table->string('room_preference')->nullable();
-            $table->string('food_preference')->nullable();
-            
-            $table->unsignedBigInteger('faculty')->nullable();
-            $table->unsignedBigInteger('department')->nullable();
-            $table->unsignedBigInteger('course')->nullable();
-            $table->string('token')->nullable();
-            $table->string('token_expiry')->nullable();
+            $table->boolean('fee_waiver')->default(false);
+            $table->string('emergency_no');
+            $table->string('number')->nullable();
+            $table->string('parent_no')->nullable();
+            $table->string('guardian_no')->nullable();
+            $table->string('room_preference');
+            $table->string('food_preference');
             $table->string('status')->default('pending');
-            $table->string('payment_status')->default('pending')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->boolean('is_verified')->default(false);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });

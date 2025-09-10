@@ -350,11 +350,7 @@
         let formData = new FormData(this);
 
         $.each(defaultAccessoryHeadIds, function (i, id) {
-            formData.append('accessory_head_ids[]', id);
-        });
-
-        $('input[name="accessories[]"]:checked').each(function () {
-            formData.append('accessory_head_ids[]', $(this).val());
+            formData.append('accessories[]', id);
         });
 
         formData.set('fee_waiver', $('#fee_waiver').is(':checked') ? '1' : '0');
@@ -450,14 +446,16 @@
                 defaultHTML = '<p>No free accessories available.</p>';
                 additionalHTML = '<p>No additional accessories available.</p>';
             } else {
+                defaultAccessoryHeadIds = [];
+                // console.log(allAccessories);
                 $.each(allAccessories, function (i, acc) {
-                    if (parseFloat(acc.price) === 0) {
-                        defaultAccessoryHeadIds.push(acc.accessory_head.id);
+                    if (parseFloat(acc.is_default) === 1) {
+                        defaultAccessoryHeadIds.push(acc.id);
                         defaultHTML += `<div  class="text-gray-700 py-1">${acc.accessory_head.name}</div>`;
                     } else {
                         additionalHTML += `<div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="${acc.accessory_head.id}" name="accessories[]" id="accessory-${acc.accessory_head.id}">
-                            <label class="form-check-label" for="accessory-${acc.accessory_head.id}">
+                            <input class="form-check-input" type="checkbox" value="${acc.id}" name="accessories[]" id="accessory-${acc.id}">
+                            <label class="form-check-label" for="accessory-${acc.id}">
                                 ${acc.accessory_head.name} (${parseFloat(acc.price).toFixed(2)} INR)
                             </label>
                         </div>`;

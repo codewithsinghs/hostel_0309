@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Helpers\Helper;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 
 
 
@@ -45,7 +47,7 @@ class StudentAccessoryController extends Controller
     public function addAccessory(Request $request)
     {
         try {
-        $resident_id = Helper::get_resident_details($request->header('auth-id'))->id;
+        $resident = Helper::get_resident_details($request->header('auth-id'));
         // Validate request
         $validated = $request->validate([
             'accessory_head_id' => 'required|exists:accessory,accessory_head_id', // Ensure accessory exists
@@ -54,8 +56,7 @@ class StudentAccessoryController extends Controller
 
         DB::beginTransaction();
 
-            $resident = Resident::findOrFail($resident_id);
-            $accessory = Accessory::where('accessory_head_id', $validated['accessory_head_id'])->firstOrFail();
+            $accessory = Accessory::where('accessory_head_id', $validated['accessory_head_id'])->with('accessoryHead')->firstOrFail();
 
             // Get current date
             $fromDate = now();
@@ -72,33 +73,61 @@ class StudentAccessoryController extends Controller
             $toDate = $fromDate->copy()->addMonths($months);
 
             // Set a fixed due date (30 days from now)
-            $dueDate = now()->addDays(30);
+            $dueDate = now()->addDays($months * 30);
 
             // Calculate the total amount (price × duration in months)
             $totalAmount = $accessory->price * $months;
 
-            // Attach accessory to the resident 
-            $studentAccessory = StudentAccessory::create([
+            $nextId = (Invoice::max('id') ?? 0) + 1;
+            $invoiceNumber = 'INV-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            //create Invoice
+            $invoice = Invoice::create([
                 'resident_id' => $resident->id,
-                'accessory_head_id' => $accessory->accessory_head_id,
-                'price' => $accessory->price,
-                'total_amount' => $totalAmount, // Store total amount
-                'from_date' => $fromDate,
-                'to_date' => $toDate,
-                'due_date' => $dueDate
+                'invoice_number' => $invoiceNumber,
+                'invoice_date' => now(),
+                'due_date' => $dueDate,
+                'total_amount' => $totalAmount,
+                'paid_amount' => 0,
+                'remaining_amount' => $totalAmount,
+                 'remarks' => 'Accessory Charge',
+                'status' => 'Pending',
             ]);
 
+            //create Invoice Items
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'item_type' => 'accessory',
+                'item_id' => $accessory->id,
+                'description' => $accessory->accessoryHead->name,
+                'price' => $accessory->price,
+                'from_date' => $fromDate,
+                'to_date' => $toDate,
+                'month' => $months,
+                'total_amount' => $totalAmount,
+            ]);  
+
+            // Attach accessory to the resident 
+            // $studentAccessory = StudentAccessory::create([
+            //     'resident_id' => $resident->id,
+            //     'accessory_head_id' => $accessory->accessory_head_id,
+            //     'price' => $accessory->price,
+            //     'total_amount' => $totalAmount, // Store total amount
+            //     'from_date' => $fromDate,
+            //     'to_date' => $toDate,
+            //     'due_date' => $dueDate
+            // ]);
+
             // Automatically create a pending payment record
-            Payment::create([
-                'resident_id' => $resident->id,
-                'student_accessory_id' => $studentAccessory->id,
-                'total_amount' => $totalAmount, // Store total amount
-                'amount' => 0, // No initial payment
-                'remaining_amount' => $totalAmount, // Ensure full amount is pending
-                'payment_status' => 'Pending',
-                'payment_method' => 'Null',
-                'due_date' => $dueDate,
-            ]);
+            // Payment::create([
+            //     'resident_id' => $resident->id,
+            //     'student_accessory_id' => $studentAccessory->id,
+            //     'total_amount' => $totalAmount, // Store total amount
+            //     'amount' => 0, // No initial payment
+            //     'remaining_amount' => $totalAmount, // Ensure full amount is pending
+            //     'payment_status' => 'Pending',
+            //     'payment_method' => 'Null',
+            //     'due_date' => $dueDate,
+            // ]);
 
             DB::commit();
 
@@ -119,7 +148,7 @@ class StudentAccessoryController extends Controller
         }
     }
 
-    public function payAccessory(Request $request, $student_accessory_id)
+    public function payAccessory(Request $request, $invoice_id)
     {
         $resident_id = Helper::get_resident_details($request->header('auth-id'))->id;
         // Validate payment request
@@ -133,22 +162,17 @@ class StudentAccessoryController extends Controller
         try {
             $resident = Resident::findOrFail($resident_id);
 
-            // Find the accessory record using `student_accessory_id`
-            $accessory = StudentAccessory::where('resident_id', $resident_id)
-                ->where('id', $student_accessory_id)
-                ->firstOrFail();
-
-            // Fetch the first recorded payment for this accessory
-            $firstPayment = Payment::where('student_accessory_id', $accessory->id)->first();
-
+            // Find the accessory record using `invoice_id`
+            $invoice = Invoice::where('resident_id', $resident_id)
+                ->find($invoice_id);
             // Ensure total amount is derived correctly
-            $totalAmount = $firstPayment ? $firstPayment->total_amount : $accessory->total_amount;
+            $totalAmount = $invoice->total_amount;
 
             // Get total payments made so far for this accessory
-            $totalPaid = Payment::where('student_accessory_id', $accessory->id)->sum('amount');
+            // $totalPaid = Payment::where('invoice_id', $invoice->id)->sum('amount');
 
             // Calculate remaining balance
-            $remainingBalance = max($totalAmount - $totalPaid, 0);
+            $remainingBalance = $invoice->remaining_amount;
 
             // Ensure payment does not exceed the remaining balance
             if ($validated['amount'] > $remainingBalance) {
@@ -163,25 +187,15 @@ class StudentAccessoryController extends Controller
             $newRemainingAmount = max($remainingBalance - $validated['amount'], 0);
 
             // Determine new payment status
-            $paymentStatus = ($newRemainingAmount == 0) ? 'Completed' : 'Pending';
+            $paymentStatus = ($newRemainingAmount == 0) ? 'paid' : 'Partial';
 
-            // Record the new payment entry (Partial or Full)
-            $payment = Payment::create([
-                'resident_id' => $resident->id,
-                'student_accessory_id' => $accessory->id,
-                'total_amount' => $totalAmount, // Keep total amount unchanged
-                'amount' => $validated['amount'], // Amount paid in this transaction
-                'remaining_amount' => $newRemainingAmount, // Updated remaining amount
-                'transaction_id' => $validated['transaction_id'],
-                'payment_method' => $validated['payment_method'],
-                'payment_status' => $paymentStatus,
-                'due_date' => $accessory->due_date,
+            // Record the payment
+            Invoice::where('id', $invoice->id)->update([
+                'paid_amount' => $invoice->paid_amount + $validated['amount'],
+                'remaining_amount' => $newRemainingAmount,
+                'remarks' => 'Accessory Payment',
+                'status' => $paymentStatus,
             ]);
-
-            // If fully paid, update the accessory status
-            if ($newRemainingAmount == 0) {
-                $accessory->update(['status' => 'Paid']);
-            }
 
             DB::commit();
 
@@ -201,15 +215,32 @@ class StudentAccessoryController extends Controller
         }
     }
 
+    //getResidentInvoices
+    public function getResidentInvoices(Request $request, $invoice_id)
+    {
+        $resident_id = Helper::get_resident_details($request->header('auth-id'))->id;
+        try {
+            $invoices = Invoice::find($invoice_id);
+            return response()->json([
+                'status' => 'success',
+                'data' => $invoices
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Failed to fetch invoices.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }   
+
     public function adminSendAccessoryToResident(Request $request)
     {
-
         try {
         $request->validate([
             'resident_id' => 'required|exists:residents,id',
             'accessory_head_id' => 'required|exists:accessory_heads,id', // ✅ validate from accessory_heads table
             'duration' => 'required|in:1 Month,3 Months,6 Months,1 Year',
-            // 'created_by' => 'required|exists:users,id',
             'remarks' => 'nullable|string',
         ]);
 
@@ -218,6 +249,7 @@ class StudentAccessoryController extends Controller
 
             // ✅ Find active accessory using accessory_head_id
             $accessory = Accessory::where('accessory_head_id', $request->accessory_head_id)
+                ->with('accessoryHead')
                 ->where('is_active', true)
                 ->first();
 
@@ -237,42 +269,42 @@ class StudentAccessoryController extends Controller
             };
 
             $toDate = $fromDate->copy()->addMonths($months);
-            $dueDate = now()->addDays(30);
+            $dueDate = now()->addDays($months * 30);
             $price = $accessory->price;
             $totalAmount = $price * $months;
 
-            // ✅ 1. Store accessory_head_id in student_accessory
-            $studentAccessory = StudentAccessory::create([
+            $nextId = (Invoice::max('id') ?? 0) + 1;
+            $invoiceNumber = 'INV-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            //create Invoice
+            $invoice = Invoice::create([
                 'resident_id' => $resident->id,
-                'accessory_head_id' => $accessory->accessory_head_id, // ✅ changed here
-                'price' => $price,
-                'total_amount' => $totalAmount,
-                'from_date' => $fromDate,
-                'to_date' => $toDate,
+                'invoice_number' => $invoiceNumber,     
+                'invoice_date' => now(),
                 'due_date' => $dueDate,
-            ]);
-
-            // ✅ 2. Create Payment with accessory_head_id
-            Payment::create([
-                'resident_id' => $resident->id,
-                'accessory_head_id' => $accessory->accessory_head_id, // ✅ changed here
-                'student_accessory_id' => $studentAccessory->id,
-                'total_amount' => $totalAmount,
-                'amount' => 0,
+                'total_amount' => $totalAmount, 
+                'paid_amount' => 0,
                 'remaining_amount' => $totalAmount,
-                'transaction_id' => null,
-                'payment_method' => 'Null',
-                'payment_status' => 'Pending',
-                'created_by' => $request->header("auth-id") ?? null,
-                'due_date' => $dueDate,
-                'remarks' => $request->remarks,
+                'remarks' => $request->remarks ?? 'Accessory Charge',
+                'status' => 'Pending',
+            ]); 
+            //create Invoice Items
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'item_type' => 'accessory',
+                'item_id' => $accessory->id,
+                'description' => $accessory->accessoryHead->name,
+                'price' => $accessory->price,
+                'from_date' => $fromDate,   
+                'to_date' => $toDate,
+                'month' => $months,
+                'total_amount' => $totalAmount,
             ]);
-
+            
             DB::commit();
 
             return response()->json([
                 'message' => 'Accessory assigned and payment created successfully.',
-                'student_accessory_id' => $studentAccessory->id,
+                'invoice_id' => $invoice->id,
                 'payment_status' => 'Pending',
                 'total_amount' => $totalAmount,
             ], 201);

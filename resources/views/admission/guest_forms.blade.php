@@ -1,7 +1,7 @@
 @extends('admission.layout')
 
 @section('content')
-<div class="container-fluid mt-5">
+<div class="container mt-5">
     <h3>List of Guests</h3>
     <hr>
 
@@ -72,12 +72,9 @@
                             <td>${guest.is_verified == 1?'Verified':'Pending'}</td>
                             <td>${guest.status || 'N/A'}</td>
                             <td>${new Date(guest.created_at).toLocaleString()}</td>
-                           <td>
-                                ${guest.is_verified == 1 
-                                    ? '<span class="badge bg-success">Verified</span>' 
-                                    : `<a href="/admission/form_verify/${guest.id}" class="btn btn-primary btn-sm">Edit & Verify</a>`}
+                            <td>${guest.is_verified == 1?'':`<a href="/admission/form_verify/${guest.id}" class="btn btn-primary btn-sm">Edit & Verify</a>`}
+                                
                             </td>
-
                         </tr>
                     `);
                 });

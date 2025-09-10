@@ -21,7 +21,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'email','gender', 'password', 'status', 'university_id', 'building_id','department_id','status','created_by'];
+    protected $fillable = ['name', 'email','gender', 'password', 'university_id', 'building_id','department_id','status','created_by'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -33,8 +33,6 @@ class User extends Authenticatable
         'remember_token',
         'token',
         'token_expiry',
-        'created_at',
-        'updated_at',
     ];
 
     /**
@@ -46,38 +44,38 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    // public function staff()
-    // {
-    //     return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id')
-    //         ->wherePivot('model_type', User::class);
-    // }
+    public function staff()
+    {
+        return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id')
+            ->wherePivot('model_type', User::class);
+    }
 
-    // public function department()
-    // {
-    //     return $this->belongsTo(Department::class, 'department_id');
-    // }
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
 
-    // public function resident()
-    // {
-    //     return $this->belongsTo(Resident::class);
-    // }
+    public function resident()
+    {
+        return $this->belongsTo(Resident::class);
+    }
 
-    // public function building()
-    // {
-    //     return $this->belongsTo(Building::class, 'building_id');
-    // }
-    //  public function assignedFines()
-    // {
-    //     return $this->hasMany(Fine::class, 'assigned_by_admin_id');
-    // }
+    public function building()
+    {
+        return $this->belongsTo(Building::class, 'building_id');
+    }
+     public function assignedFines()
+    {
+        return $this->hasMany(Fine::class, 'assigned_by_admin_id');
+    }
 
-    // public function approvedFines()
-    // {
-    //     return $this->hasMany(Fine::class, 'approved_by_accountant_id');
-    // }
+    public function approvedFines()
+    {
+        return $this->hasMany(Fine::class, 'approved_by_accountant_id');
+    }
 
-    // public function university()
-    // {
-    //     return $this->belongsTo(University::class, 'university_id');
-    // }
+    public function university()
+    {
+        return $this->belongsTo(University::class, 'university_id');
+    }
 }

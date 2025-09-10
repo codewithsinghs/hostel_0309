@@ -21,9 +21,6 @@
                             <option value="">Select Fee Head</option>
                             {{-- Fee heads will be loaded here by JavaScript --}}
                         </select>
-                        <button type="button" class="btn btn-outline-secondary btn-lg" id="addFeeHeadBtn">
-                            + Add New Fee Head
-                        </button>
                     </div>
                 </div>
                 <div class="col-md-6">

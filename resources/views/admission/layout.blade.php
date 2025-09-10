@@ -59,27 +59,20 @@
         
         <h4 class="text-center text-light">Admission Dashboard</h4>
 
-       
+        <!-- Logout Button -->
+        <button type="button" onClick="callLogoutAPI()" class="btn btn-danger w-100">Logout</button>
 
 
         <a href="{{ route('admission.dashboard') }}" class="{{ request()->routeIs('admission.dashboard') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
-        <!-- <a href="{{ route('admission.dashboard') }}" class="{{ request()->routeIs('admission.dashboard') ? 'active' : '' }}">
+        <!-- <a href="{{ route('hod.dashboard') }}" class="{{ request()->routeIs('hod.dashboard') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i> Verify Guests
         </a> -->
         <!-- Guest Management -->
         <a href="{{ route('admission.guest_forms') }}" id="guestForms">
             <i class="bi bi-people"></i> Guest Forms
         </a>
-
-        <!-- Spacer to push logout to bottom -->
-        <div class="flex-grow-1"></div>
-
-        <!-- Logout Button -->
-        <div class="text-left p-3">
-            <button type="button" onClick="callLogoutAPI()" class="btn btn-danger">Logout</button>
-        </div>
 
     </div>
 

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable; // ✅ this is important
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; 
 
+
 class Guest extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable; 
@@ -61,14 +62,24 @@ class Guest extends Authenticatable
     //         ->with('accessoryHead');
     // }
 
-    // public function accessories()
-    // {
-    //     return $this->belongsToMany(Accessory::class, 'guest_accessory', 'guest_id', 'accessory_head_id','id','accessory_head_id')
-    //         ->withPivot(['price', 'total_amount', 'from_date', 'to_date'])
-    //         ->with('accessoryHead');
-    // }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 
+    public function invoiceItems()
+    {
+        return $this->hasManyThrough(InvoiceItem::class, Invoice::class);
+    }
 
+    public function accessories()
+    {
+        return $this->invoiceItems()
+            ->where('item_type', 'accessory')
+            ->with('accessory:id,name');
+    }
+
+ 
     public function feeException()
     {
         return $this->hasOne(FeeException::class);
@@ -86,28 +97,5 @@ class Guest extends Authenticatable
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
-
-
-    // 08092025
-
-    // public function invoices()
-    // {
-    //     return $this->hasMany(Invoice::class);
-    // }
-
-    // public function invoiceItems()
-    // {
-    //     return $this->hasManyThrough(InvoiceItem::class, Invoice::class);
-    // }
-
-    // public function accessories()
-    // {
-    //     return $this->invoiceItems()
-    //         ->where('item_type', 'accessory')
-    //         ->with('accessory:id,name');
-    // }
-
-
-
 
 }

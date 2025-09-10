@@ -2,24 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use App\Models\Fee;
 use App\Models\FeeHead;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Services\FeeCalculatorService;
+use Illuminate\Support\Carbon;
+use Exception;
+use App\Helpers\Helper;
 
 class FeeController extends Controller
 {
-    protected $feeCalculator;
-
-    public function __construct(FeeCalculatorService $feeCalculator)
-    {
-        $this->feeCalculator = $feeCalculator;
-    }
-
     private function apiResponse($success, $message, $data = null, $status = 200, $errors = null)
     {
         return response()->json([
@@ -33,10 +25,12 @@ class FeeController extends Controller
     // ✅ Admin Adds or Updates Fee for a Head
     public function createOrUpdate(Request $request)
     {
+        $admin = Helper::get_auth_admin_user($request);
         $request->validate([
             'fee_head_id' => 'required|exists:fee_heads,id',
             'amount' => 'required|numeric',
-            'created_by' => 'nullable|integer|exists:users,id',
+            'is_one_time' => 'nullable|boolean',
+            'is_mandatory' => 'nullable|boolean',
         ]);
 
         try {
@@ -49,6 +43,9 @@ class FeeController extends Controller
 
             $existing = Fee::where('fee_head_id', $request->fee_head_id)
                 ->where('is_active', true)
+                ->whereHas('feeHead', function ($q) use ($admin) {
+                    $q->where('university_id', $admin->university_id);
+                })
                 ->first();
 
             if ($existing) {
@@ -71,9 +68,11 @@ class FeeController extends Controller
                 'fee_head_id' => $feeHead->id,
                 'name' => $feeHead->name,
                 'amount' => $request->amount,
+                'is_one_time' => $request->is_one_time ?? 0,
+                'is_mandatory' => $request->is_mandatory ?? 0,
                 'from_date' => $today,
                 'is_active' => true,
-                'created_by' => $request->created_by ?? null,
+                'created_by' => $admin->id ?? null,
             ]);
 
             return $this->apiResponse(true, 'Fee added/updated successfully.', $newFee, 201);
@@ -85,10 +84,14 @@ class FeeController extends Controller
     }
 
     // ✅ Get All Active Fees
-    public function getAllActiveFees()
+    public function getAllActiveFees(Request $request)
     {
+        $user = Helper::get_auth_admin_user($request);
         try {
-            $fees = Fee::where('is_active', true)->get();
+            $fees = Fee::where('is_active', true)->whereHas('feeHead', function ($q) use ($user) {
+                $q->where('university_id', $user->university_id);
+            })
+            ->with('feeHead')->get();
             return $this->apiResponse(true, 'Active fees fetched successfully.', $fees);
         } catch (Exception $e) {
             return $this->apiResponse(false, 'Failed to fetch active fees.', null, 500, [
@@ -139,47 +142,5 @@ class FeeController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
-    }
-
-    // GET /api/fees/{facultyId}
-    public function getFeeBreakUps($facultyId)
-    {
-        Log::info('fetching Fee');
-        try {
-            $fees = Fee::with('feeHead')
-                ->where('is_active', 1)
-                ->whereHas('feeHead', fn($q) => $q->where('university_id', $facultyId))
-                ->get();
-                Log::info('fetched', );
-            return $this->apiResponse(true, 'Fee fetched successfully.', $fees);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->apiResponse(false, 'Fee not found.', null, 404);
-        } catch (Exception $e) {
-            return $this->apiResponse(false, 'Failed to fetch fee.', null, 500, [
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-
-    public function calculate(Request $request)
-    {
-        Log::info($request->all());
-        $request->validate([
-            'faculty_id' => 'required|integer',
-            'months' => 'required|integer|min:1',
-            'accessories' => 'array',
-        ]);
-
-        $breakup = $this->feeCalculator->calculate(
-            $request->faculty_id,
-            $request->months,
-            $request->accessories ?? []
-        );
-
-        return response()->json([
-            'success' => true,
-            'data' => $breakup,
-        ]);
     }
 }

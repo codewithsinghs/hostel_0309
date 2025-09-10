@@ -19,7 +19,7 @@
 
             <div class="mb-3">
                 <label for="amount" class="form-label">Enter Payment Amount:</label>
-                <input type="number" name="amount" class="form-control" required>
+                <input type="number" id="amount" name="amount" class="form-control" required>
             </div>
 
             <div class="mb-3">
@@ -43,6 +43,38 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            // Set up AJAX with CSRF token and auth headers
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'token': localStorage.getItem('token'),
+                    'auth-id': localStorage.getItem('auth-id')
+                }
+            });
+            //fetch payment amount
+            let invoice_id = window.location.pathname.replace(/\/$/, "").split("/").pop(); 
+            fetch(`/api/resident/invoices/${invoice_id}`, {
+                method: 'GET',
+                headers: {  
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'token': localStorage.getItem('token'), 
+                    'auth-id': localStorage.getItem('auth-id')
+                }
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.data) {
+                // console.log(response);
+                    document.getElementById("amount").value = response.data.remaining_amount;
+                } else {
+                    console.error('Failed to fetch invoice details:', response.message);
+                }
+            })  .catch(error => {
+                console.error('Error fetching invoice details:', error);
+            }); 
+        });
         // Handle form submission with AJAX
         document.getElementById('paymentForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent the default form submission
@@ -50,9 +82,9 @@
             // Create a FormData object to send the form data
             let formData = new FormData(this);
 
-            let accessory_id = window.location.pathname.replace(/\/$/, "").split("/").pop(); 
+            let invoice_id = window.location.pathname.replace(/\/$/, "").split("/").pop(); 
             // Send the data via AJAX using fetch
-            fetch(`/api/resident/accessories/${accessory_id}/pay`, {
+            fetch(`/api/resident/invoices/${invoice_id}/pay`, {
                 method: 'POST',
                 body: formData,
                 headers: {

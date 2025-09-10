@@ -12,13 +12,15 @@ class FeeHead extends Model
 
     protected $fillable = [
         'name',
-        'university_id',
         'created_by',
+        'is_mandatory',
+        'university_id',
+        'is_one_time',
+        'status'
     ];
 
-
-    public function fee()
+    public function university()
     {
-        return $this->hasMany(Fee::class);
+        return $this->belongsTo(University::class, 'university_id');
     }
 }

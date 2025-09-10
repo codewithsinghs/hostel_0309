@@ -96,34 +96,12 @@ class AccessoryController extends Controller
         }
     }
 
-    // Only for guest
-    public function guestActiveAccessories(Request $request)
-    {
-        try {
-            $user = Helper::get_auth_guest_user($request);
-            // Log::info('guests', $user);
-            $activeAccessories = Accessory::with('accessoryHead')
-                ->where('is_active', true)
-                ->whereHas('accessoryHead', function ($q) use ($user) {
-                    $q->where('university_id', $user->faculty->university_id);
-                })
-                ->get();
-                // Log::info("Active Accessories fetched: " . json_encode($activeAccessories));
-            return $this->apiResponse(true, 'Active accessories fetched successfully.', $activeAccessories);
-        } catch (Exception $e) {
-            return $this->apiResponse(false, 'Failed to fetch active accessories.', null, 500, [
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-
     // ✅ Get Active Accessories
     public function getActiveAccessories(Request $request)
     {
         try {
             $user = Helper::get_auth_admin_user($request);
-            Log::info('log');
+            Log::info("Fetching active accessories for University ID: " . $user->university_id);
             $activeAccessories = Accessory::with('accessoryHead')
                 ->where('is_active', true)
                 ->whereHas('accessoryHead', function ($q) use ($user) {
@@ -140,6 +118,27 @@ class AccessoryController extends Controller
     }
 
         // ✅ Get Active Accessories
+    public function getGuestActiveAccessories(Request $request)
+    {
+        try {
+            $guest = Helper::get_auth_guest_user($request);
+            $activeAccessories = Accessory::with('accessoryHead')
+                ->where('is_active', true)
+                ->whereHas('accessoryHead', function ($q) use ($guest) {
+                    $q->where('university_id', $guest->faculty->university_id);
+                })
+                ->get();
+                Log::info("Active Accessories fetched: " . json_encode($activeAccessories));
+            return $this->apiResponse(true, 'Active accessories fetched successfully.', $activeAccessories);
+        } catch (Exception $e) {
+            return $this->apiResponse(false, 'Failed to fetch active accessories.', null, 500, [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+        // ✅ Get Active Accessories
     public function getPublicActiveAccessories($faculty_id)
     {
         try {
@@ -151,6 +150,7 @@ class AccessoryController extends Controller
                 $query->where('university_id', $faculty->university_id);
             })
             ->get();
+        // Log::Info($activeAccessories);    
         return $this->apiResponse(true, 'Active accessories fetched successfully.', $activeAccessories);
         } catch (Exception $e) {
             return $this->apiResponse(false, 'Failed to fetch active accessories.', null, 500, [
@@ -208,15 +208,5 @@ class AccessoryController extends Controller
             ]);
         }
     }
-
-
-    public function index()
-{
-    return response()->json([
-        ['id' => 1, 'name' => 'Charger', 'qty' => 10, 'price' => 500],
-        ['id' => 2, 'name' => 'Headphones', 'qty' => 5, 'price' => 1200],
-    ]);
-}
-
 
 }

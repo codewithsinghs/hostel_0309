@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\InvoiceItem;
 
 class CheckoutController extends Controller
 {
@@ -343,16 +344,12 @@ class CheckoutController extends Controller
     public function getAccessoryByResidentId($residentId)
     {
         try {
-            // $resident = Resident::findOrFail($residentId);
-            // $guestId = $resident->id;
-
-            $resident = Resident::findOrFail($residentId);
-            $guestId = $resident->guest_id;
-
-
-            $accessories = GuestAccessory::with('accessoryHead')
-                ->where('guest_id', $guestId)
-                ->get();
+            $accessories = InvoiceItem::where('item_type', 'accessory')
+            ->whereHas('invoice', function ($q) use ($residentId) {
+                $q->where('resident_id', $residentId);
+            })
+            ->with('Invoice')
+            ->get();
 
             $checkout = Checkout::where('resident_id', $residentId)
                 ->latest()
@@ -379,6 +376,7 @@ class CheckoutController extends Controller
                 'errors' => null,
             ]);
         } catch (\Exception $e) {
+            Log::info($e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch default accessories or deposited amount.',
@@ -394,7 +392,7 @@ class CheckoutController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'accessories' => 'required|array',
-            'accessories.*.accessory_head_id' => 'required|exists:accessory,id',
+            'accessories.*.accessory_head_id' => 'required|exists:accessory_heads,id',
             'accessories.*.is_returned' => 'required|boolean',
             'accessories.*.debit_amount' => 'nullable|numeric|min:0',
             'accessories.*.remark' => 'nullable|string'

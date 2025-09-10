@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4">Guests Who Have Paid</h2>
+    <h2 class="mb-4">Paid Guests</h2>
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped" id="paidGuestsTable">
@@ -23,10 +23,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/guests/paid')
+        fetch('/api/admin/paid-guests', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',   
+                'token': localStorage.getItem('token'),     
+                'auth-id': localStorage.getItem('auth-id') // Include auth-id for authorization
+            }
+            })
             .then(response => response.json())
             .then(data => {
-                console.log('API Response:', data); // Debug API response structure
+                // console.log('API Response:', data); // Debug API response structure
 
                 const tableBody = document.querySelector('#paidGuestsTable tbody');
                 tableBody.innerHTML = '';

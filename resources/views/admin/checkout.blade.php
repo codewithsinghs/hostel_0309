@@ -254,6 +254,7 @@
         })
             .then(response => response.json())
             .then(apiResponse => {
+                // console.log('Fetched accessories:', apiResponse); // Debug log
                 const modalBody = document.getElementById('accessoryModalBody');
                 const submitButton = document.getElementById('submitAccessoriesBtn');
 
@@ -282,7 +283,7 @@
                     accessories.forEach(acc => {
                         // Get previously submitted values for pre-filling
                         const prevSubmittedAcc = residentSubmittedData.accessories ? 
-                                                 residentSubmittedData.accessories.find(a => a.accessory_head_id === acc.accessory_head.id) : 
+                                                 residentSubmittedData.accessories.find(a => a.item_id === acc.item_id) : 
                                                  null;
                         const isReturned = prevSubmittedAcc ? prevSubmittedAcc.is_returned : null;
                         const remark = prevSubmittedAcc ? prevSubmittedAcc.remark : '';
@@ -290,30 +291,30 @@
 
                         accessoriesHtml += `
                             <tr>
-                                <td>${acc.accessory_head.name}</td>
+                                <td>${acc.description}</td>
                                 <td>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input return-radio" type="radio" 
-                                               id="return_yes_${acc.accessory_head.id}" 
-                                               name="return_${acc.accessory_head.id}" value="yes" 
+                                               id="return_yes_${acc.item_id}" 
+                                               name="return_${acc.item_id}" value="yes" 
                                                ${isReturned === true ? 'checked' : ''} 
                                                ${isResidentSubmitted ? 'disabled' : ''}>
-                                        <label class="form-check-label" for="return_yes_${acc.accessory_head.id}">Yes</label>
+                                        <label class="form-check-label" for="return_yes_${acc.item_id}">Yes</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input return-radio" type="radio" 
-                                               id="return_no_${acc.accessory_head.id}" 
-                                               name="return_${acc.accessory_head.id}" value="no" 
+                                               id="return_no_${acc.item_id}" 
+                                               name="return_${acc.item_id}" value="no" 
                                                ${isReturned === false ? 'checked' : ''} 
                                                ${isResidentSubmitted ? 'disabled' : ''}>
-                                        <label class="form-check-label" for="return_no_${acc.accessory_head.id}">No</label>
+                                        <label class="form-check-label" for="return_no_${acc.item_id}">No</label>
                                     </div>
                                 </td>
                                 <td><input type="text" class="form-control remark-input" 
-                                           id="remark_${acc.accessory_head.id}" value="${remark || ''}" 
+                                           id="remark_${acc.item_id}" value="${remark || ''}" 
                                            ${isResidentSubmitted ? 'disabled' : ''}></td>
                                 <td><input type="number" class="form-control debit-input" 
-                                           id="debit_amount_${acc.accessory_head.id}" value="${debitAmount || 0}" 
+                                           id="debit_amount_${acc.item_id}" value="${debitAmount || 0}" 
                                            ${isResidentSubmitted ? 'disabled' : ''}></td>
                             </tr>
                         `;

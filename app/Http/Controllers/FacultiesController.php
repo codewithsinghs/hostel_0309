@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Faculty;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class FacultiesController extends Controller
 {
@@ -134,10 +133,9 @@ class FacultiesController extends Controller
 
     public function getActiveFaculties()
     {
-        Log::alert('got fsc');
         try {
-            $faculties = \App\Models\Faculty::select('id', 'name')->where('status', 1)->get();
-            Log::info($faculties);
+            $faculties = \App\Models\Faculty::where('status', 1)->get();
+
             if ($faculties->isEmpty()) {
                 return response()->json(['success' => false, 'message' => 'No active faculties found.', 'data' => null], 404);
             }

@@ -98,6 +98,8 @@
         <!-- Admin Panel Section -->
         <h4>
             Admin Panel
+            <!-- Logout Button -->
+                <button type="button" onClick="callLogoutAPI()" class="btn btn-danger w-100">Logout</button>
         </h4>
 
         <!-- Navigation Links -->
@@ -105,25 +107,25 @@
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
 
-        <!-- Master Management (Dropdown) -->
-        <a class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#masterMenu"
-            role="button" aria-expanded="false" aria-controls="masterMenu">
-            <span><i class="bi bi-gear"></i> Master Management</span>
-            <i class="bi bi-chevron-down"></i>
+    <!-- Master Management (Dropdown) -->
+    <a class="d-flex justify-content-between align-items-center" 
+       data-bs-toggle="collapse" href="#masterMenu" role="button" aria-expanded="false" aria-controls="masterMenu">
+        <span><i class="bi bi-gear"></i> Master Management</span>
+        <i class="bi bi-chevron-down"></i>
+    </a>
+    <div class="collapse ps-4" id="masterMenu">
+        <a href="{{ route('admin.faculties') }}" id="facultiesTab">
+            <i class="bi bi-building"></i> Faculties
         </a>
-        <div class="collapse ps-4" id="masterMenu">
-            <a href="{{ route('admin.faculties') }}" id="facultiesTab">
-                <i class="bi bi-building"></i> Faculties
-            </a>
-            <a href="{{ route('admin.departments') }}" id="roomsTab">
-                <i class="bi bi-door-open"></i> Departments
-            </a>
-            <a href="{{ route('admin.courses') }}" id="bedsTab">
-                <i class="bi bi-folder"></i> Courses
-            </a>
-        </div>
+        <a href="{{ route('admin.departments') }}" id="roomsTab">
+            <i class="bi bi-door-open"></i> Departments
+        </a>
+        <a href="{{ route('admin.courses') }}" id="bedsTab">
+            <i class="bi bi-folder"></i> Courses
+        </a>
+    </div>
 
-
+        
         <div class="collapse ps-4" id="requestsMenu">
             <a href="{{ route('admin.leave_requests') }}" id="leaveRequestsTab">
                 <i class="bi bi-calendar-x"></i> Leave Requests
@@ -218,13 +220,6 @@
         </a>
 
 
-        <!-- Spacer to push logout to bottom -->
-        <div class="flex-grow-1"></div>
-
-        <!-- Logout Button -->
-        <div class="text-left p-3">
-            <button type="button" onClick="callLogoutAPI()" class="btn btn-danger">Logout</button>
-        </div>
 
     </div>
 
@@ -235,13 +230,20 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function() {
-            if (!localStorage.getItem('token') && !localStorage.getItem('token')) {
-                callLogoutAPI();
-            } else if (localStorage.getItem('token') && !localStorage.getItem('auth-id')) {
-                callLogoutAPI();
-            } else if (!localStorage.getItem('token') && localStorage.getItem('auth-id')) {
-                callLogoutAPI();
-            } else {
+           if(!localStorage.getItem('token') && !localStorage.getItem('token'))
+           {
+            callLogoutAPI();
+           }
+           else if(localStorage.getItem('token') && !localStorage.getItem('auth-id'))
+           {
+            callLogoutAPI();
+           }
+           else if(!localStorage.getItem('token') && localStorage.getItem('auth-id'))
+           {
+            callLogoutAPI();
+           }
+           else
+           {
                 $.ajax({
                     url: '/api/admin/profile', // your API endpoint
                     type: 'GET',
@@ -249,7 +251,7 @@
                         'token': localStorage.getItem('token'),
                         'auth-id': localStorage.getItem('auth-id')
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (!response.success) {
                             callLogoutAPI();
                         }
@@ -258,22 +260,22 @@
             }
 
         });
-
         function callLogoutAPI() {
-            $.ajax({
-                url: '/api/logout',
-                type: 'POST',
-                headers: {
-                    'token': localStorage.getItem('token'),
-                    'Auth-ID': localStorage.getItem('auth-id')
-                },
-                complete: function() {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('auth-id');
-                    window.location.href = "/login";
-                }
-            });
+        $.ajax({
+            url: '/api/logout',
+            type: 'POST',
+            headers: {
+                'token': localStorage.getItem('token'),
+                'Auth-ID': localStorage.getItem('auth-id')
+            },
+            complete: function () {
+                localStorage.removeItem('token');
+                localStorage.removeItem('auth-id');
+                window.location.href = "/login";
+            }
+        });
         }
+
     </script>
 </body>
 

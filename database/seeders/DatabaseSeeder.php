@@ -22,13 +22,5 @@ class DatabaseSeeder extends Seeder
         Role::create(['name' => 'gym_manager']);
         Role::create(['name' => 'hod']);
         Role::create(['name' => 'accountant']);
-
-        $this->call([
-            SuperAdminSeeder::class,
-            FacultyCourse::class,
-            Fees::class,
-            AccessorySeeder::class,
-            HostelSeeder::class
-        ]);
     }
 }

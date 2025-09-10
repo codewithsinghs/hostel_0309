@@ -259,7 +259,7 @@
                 `;
 
                 // Fetch active accessories to map IDs to names
-                const accessoriesResponse = await fetch('http://127.0.0.1:8000/api/accessories/active', {
+                const accessoriesResponse = await fetch('http://127.0.0.1:8000/api/accountant/accessories/active', {
                     method: 'GET',
                     headers: {
                         'token': localStorage.getItem('token'),

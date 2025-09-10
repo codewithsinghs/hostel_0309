@@ -21,7 +21,6 @@
                                 <th>Total Amount</th>
                                 <th>Paid</th>
                                 <th>Remaining</th>
-                                <th>Method</th>
                                 <th>Status</th>
                                 <th>Due Date</th>
                                 <th>Created At</th>
@@ -100,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${payment.total_amount || 'N/A'}</td>
                             <td>${payment.amount_paid || 'N/A'}</td>
                             <td>${payment.remaining_amount || 'N/A'}</td>
-                            <td>${payment.payment_method || 'N/A'}</td>
                             <td>${payment.payment_status || 'N/A'}</td>
                             <td>${payment.due_date ?? 'N/A'}</td>
                             <td>${payment.created_at ? new Date(payment.created_at).toLocaleString() : 'N/A'}</td>

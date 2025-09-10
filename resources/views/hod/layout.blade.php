@@ -59,7 +59,8 @@
         
         <h4 class="text-center text-light">Head Of Depart.</h4>
 
-       
+        <!-- Logout Button -->
+        <button type="button" onClick="callLogoutAPI()" class="btn btn-danger w-100">Logout</button>
 
 
         <a href="{{ route('hod.dashboard') }}" class="{{ request()->routeIs('hod.dashboard') ? 'active' : '' }}">
@@ -70,13 +71,6 @@
             <i class="bi bi-calendar-x"></i> Leave Requests
         </a>
 
-          <!-- Spacer to push logout to bottom -->
-        <div class="flex-grow-1"></div>
-
-        <!-- Logout Button -->
-        <div class="text-left p-3">
-            <button type="button" onClick="callLogoutAPI()" class="btn btn-danger">Logout</button>
-        </div>
     </div>
 
     <div class="content">

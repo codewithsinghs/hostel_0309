@@ -59,12 +59,24 @@
         
         <h4 class="text-center text-light">Accountant</h4>
 
-       
+        <!-- Logout Button -->
+        <button type="button" onClick="callLogoutAPI()" class="btn btn-danger w-100">Logout</button>
 
 
         <a href="{{ route('accountant.dashboard') }}" class="{{ request()->routeIs('accountant.dashboard') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
+
+        <!-- Master Management (Dropdown) -->
+        <a class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#masterMenu" role="button" aria-expanded="false" aria-controls="masterMenu">
+            <span><i class="bi bi-gear"></i> Master Management</span>
+            <i class="bi bi-chevron-down"></i>
+        </a>
+        <div class="collapse ps-4" id="masterMenu">
+            <a href="{{ route('accountant.fee_heads') }}" id="FeeHeadTab">
+                <i class="bi bi-building"></i> Fee Head
+            </a>
+       </div>
 
         <a href="{{ route('accountant.fees') }}" class="nav-link text-white">
             <i class="bi bi-currency-dollar"></i> Manage Fees {{-- Changed icon to Bootstrap Icon --}}
@@ -89,16 +101,6 @@
         <a href="{{ route('accountant.fines') }}" class="{{ request()->routeIs('accountant.guests') ? 'active' : '' }}">
             <i class="bi bi-person-fill"></i> Fines Management
         </a>
-
-        <!-- Spacer to push logout to bottom -->
-        <div class="flex-grow-1"></div>
-
-        <!-- Logout Button -->
-        <div class="text-left p-3">
-            <button type="button" onClick="callLogoutAPI()" class="btn btn-danger">Logout</button>
-        </div>
-
- 
 
     </div>
 

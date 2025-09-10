@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('accessory_checkout_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('checkout_id')->constrained('checkouts')->onDelete('cascade');
-            $table->foreignId('accessory_head_id')->constrained('accessories')->onDelete('cascade');
+            $table->foreignId('accessory_head_id')->constrained('accessory')->onDelete('cascade');
             $table->boolean('is_returned');
             $table->decimal('debit_amount', 10, 2)->default(0);
             $table->text('remark')->nullable();

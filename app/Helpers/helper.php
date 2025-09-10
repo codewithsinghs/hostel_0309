@@ -31,6 +31,13 @@ class Helper
         return time() + 24*3600*1;  // 365 days
     }
 
+    public static function CreateInvoice($guest_id){
+        $guest = Guest::find($guest_id);
+        if($guest){
+            
+        }
+    }
+
     public static function get_auth_guest_user(Request $request){
 
         $user = Guest::find($request->header('auth-id'));

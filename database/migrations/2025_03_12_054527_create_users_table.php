@@ -17,11 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('gender')->nullable();
             $table->string('password')->nullable(); // No authentication for now
-            $table->boolean('status')->default(true);
             $table->foreignId('university_id')->nullable()->constrained()->onDelete('cascade'); // For Admins & Staff
             $table->unsignedBigInteger('building_id')->nullable();
-            $table->string('token')->nullable();
-            $table->string('token_expiry')->nullable();
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('cascade');
             $table->timestamps();
             $table->unsignedBigInteger('created_by')->nullable();

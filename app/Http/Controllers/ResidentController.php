@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Helper;
+use App\Models\BedAssignmentHistory;
 
 class ResidentController extends Controller
 {
@@ -147,6 +148,14 @@ class ResidentController extends Controller
 
             $bed->status = 'occupied';
             $bed->save();
+
+            BedAssignmentHistory::create([
+                'bed_id' => $bed->id,
+                'resident_id' => $resident->id,
+                'assigned_at' => now(),
+                'discharged_at' => null,
+                'notes' => 'Bed assigned to resident',
+            ]);
 
             return response()->json([
                 'success' => true,

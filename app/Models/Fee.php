@@ -20,6 +20,6 @@ class Fee extends Model
 
     public function feeHead()
     {
-        return $this->belongsTo(FeeHead::class);
+        return $this->belongsTo(FeeHead::class,'fee_head_id');
     }
 }

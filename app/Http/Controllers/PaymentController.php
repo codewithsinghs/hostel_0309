@@ -20,6 +20,7 @@ use App\Models\Subscription;
 use App\Models\StudentAccessory;
 use App\Models\Mess;
 use App\Models\GuestAccessory;
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -538,25 +539,16 @@ class PaymentController extends Controller
 
 
 
-    public function getPendingPayments($resident_id)
+    public function getPendingPayments()
     {
+        $resident_id = Helper::get_resident_details(request()->header('auth-id'))->id;
         try {
-            $validator = Validator::make(['resident_id' => $resident_id], [
-                'resident_id' => 'required|exists:residents,id',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'data' => null,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            $pendingPayments = Payment::where('resident_id', $resident_id)
+            $pendingPayments = Invoice::where('resident_id', $resident_id)
+                ->with('resident')
                 ->where('remaining_amount', '>', 0)
                 ->get();
+
+            // Log::info('Pending Payments: ' . $pendingPayments);
 
             if ($pendingPayments->isEmpty()) {
                 return response()->json([
@@ -661,36 +653,38 @@ class PaymentController extends Controller
             $resident_id = Helper::get_resident_details($request->header('auth-id'))->id;
 
             // Subquery to get the latest payment ID for each student_accessory_id
-$latestPaymentId = Payment::where('resident_id', $resident_id)
-    ->whereNotNull('student_accessory_id')
-    ->max('id'); // Get the max ID for the given resident_id
+            $latestPaymentId = Payment::where('resident_id', $resident_id)
+                ->whereNotNull('student_accessory_id')
+                ->max('id'); // Get the max ID for the given resident_id
+
+                Log::info('Latest Payment ID: ' . $latestPaymentId);
 
 
-    $formattedPayments = Payment::with([
-        'studentAccessory.accessory.accessoryHead',
-        'resident.user',
-        'resident.guest'
-    ])
-    ->where('id', $latestPaymentId) // Filter by max ID
-    ->where('resident_id', $resident_id)
-    ->whereNotNull('student_accessory_id')
-    ->where('remaining_amount', '>', 0)
-    // ->select('id as payment_id', 'amount', 'remaining_amount', 'student_accessory_id')
-    ->with(['studentAccessory.accessoryHead' => function ($query) {
-        $query->select('id', 'name');
-    }])
-    ->get()
-    ->map(function ($payment) {
-        return [
-            'payment_id' => $payment->payment_id,
-            'amount' => $payment->amount,
-            'remaining_amount' => $payment->remaining_amount,
-            'student_accessory_id' => $payment->student_accessory_id,
-            'accessory_name' => $payment->studentAccessory->accessoryHead->name ?? 'N/A',
-            'resident_name' => $payment->resident->user->name ?? 'N/A',
-            'scholar_no' => $payment->resident->guest->scholar_no ?? 'N/A'
-        ];
-    });
+            $formattedPayments = Payment::with([
+                'studentAccessory.accessory.accessoryHead',
+                'resident.user',
+                'resident.guest'
+            ])
+            ->where('id', $latestPaymentId) // Filter by max ID
+            ->where('resident_id', $resident_id)
+            ->whereNotNull('student_accessory_id')
+            ->where('remaining_amount', '>', 0)
+            // ->select('id as payment_id', 'amount', 'remaining_amount', 'student_accessory_id')
+            ->with(['studentAccessory.accessoryHead' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->get()
+            ->map(function ($payment) {
+                return [
+                    'payment_id' => $payment->payment_id,
+                    'amount' => $payment->amount,
+                    'remaining_amount' => $payment->remaining_amount,
+                    'student_accessory_id' => $payment->student_accessory_id,
+                    'accessory_name' => $payment->studentAccessory->accessoryHead->name ?? 'N/A',
+                    'resident_name' => $payment->resident->user->name ?? 'N/A',
+                    'scholar_no' => $payment->resident->guest->scholar_no ?? 'N/A'
+                ];
+            });
 
                 // Log::info($formattedPayments);
 
@@ -792,17 +786,76 @@ $latestPaymentId = Payment::where('resident_id', $resident_id)
 
 
 
+    // public function getAllPendingPayments(Request $request)
+    // {
+    //     try {
+    //         $user = Helper::get_auth_admin_user($request);
+    //         $latestPayments = \App\Models\Payment::selectRaw('MAX(id) as latest_id')
+    //             ->whereNotNull('resident_id')
+    //             ->groupBy('resident_id')
+    //             ->pluck('latest_id');
+
+    //         $payments = \App\Models\Payment::with('resident.user')
+    //             ->whereIn('id', $latestPayments)
+    //             ->whereHas('resident.user', function($query) use ($user) {
+    //                 $query->where('university_id', $user->university_id);
+    //             })
+    //             ->where('remaining_amount', '>', 0)
+    //             ->get();
+
+    //         if ($payments->isEmpty()) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'No pending payments found for any resident.',
+    //                 'data' => null,
+    //                 'errors' => null
+    //             ], 404);
+    //         }
+
+    //         $response = $payments->map(function ($payment) {
+    //             return [
+    //                 'payment_id'       => $payment->id,
+    //                 'resident_id'      => $payment->resident_id,
+    //                 'resident_name'    => optional($payment->resident->user)->name,
+    //                 'subscription_id'  => $payment->subscription_id,
+    //                 'total_amount'     => $payment->total_amount,
+    //                 'amount_paid'      => $payment->amount,
+    //                 'remaining_amount' => $payment->remaining_amount,
+    //                 'payment_method'   => $payment->payment_method,
+    //                 'payment_status'   => $payment->payment_status,
+    //                 'due_date'         => $payment->due_date,
+    //                 'created_at'       => $payment->created_at->toDateTimeString(),
+    //             ];
+    //         });
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Latest pending payments fetched successfully.',
+    //             'data'    => $response,
+    //             'errors'  => null
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Something went wrong while fetching pending payments.',
+    //             'data' => null,
+    //             'errors' => ['exception' => $e->getMessage()]
+    //         ], 500);
+    //     }
+    // }
+
+
     public function getAllPendingPayments(Request $request)
     {
         try {
             $user = Helper::get_auth_admin_user($request);
-            $latestPayments = \App\Models\Payment::selectRaw('MAX(id) as latest_id')
+            $latestInvoiceIds = Invoice::selectRaw('id as latest_id')
                 ->whereNotNull('resident_id')
-                ->groupBy('resident_id')
+                ->orderBy('resident_id')
                 ->pluck('latest_id');
-
-            $payments = \App\Models\Payment::with('resident.user')
-                ->whereIn('id', $latestPayments)
+            Log::info('Latest Invoice IDs: ' . $latestInvoiceIds);
+            $payments = Invoice::with('resident.user')
+                ->whereIn('id', $latestInvoiceIds)
                 ->whereHas('resident.user', function($query) use ($user) {
                     $query->where('university_id', $user->university_id);
                 })
@@ -825,10 +878,10 @@ $latestPaymentId = Payment::where('resident_id', $resident_id)
                     'resident_name'    => optional($payment->resident->user)->name,
                     'subscription_id'  => $payment->subscription_id,
                     'total_amount'     => $payment->total_amount,
-                    'amount_paid'      => $payment->amount,
+                    'amount_paid'      => $payment->paid_amount,
                     'remaining_amount' => $payment->remaining_amount,
-                    'payment_method'   => $payment->payment_method,
-                    'payment_status'   => $payment->payment_status,
+                    // 'payment_method'   => $payment->payment_method,
+                    'payment_status'   => $payment->status,
                     'due_date'         => $payment->due_date,
                     'created_at'       => $payment->created_at->toDateTimeString(),
                 ];

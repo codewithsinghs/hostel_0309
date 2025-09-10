@@ -16,8 +16,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Models\Accessory;
+use App\Models\Fee;
 use App\Models\GuestAccessory;
 use Carbon\Carbon;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Mess;
+
 
 class AdminController extends Controller
 {
@@ -160,6 +165,9 @@ class AdminController extends Controller
                 'guest_id' => 'required|exists:guests,id'
             ]);
 
+            // Helper::CreateInvoice($validatedData['guest_id']);
+
+            $admin = User::find($request->header('auth-id'));
             $guest = Guest::findOrFail($validatedData['guest_id']);
 
             if ($guest->status === 'approved') {
@@ -167,13 +175,48 @@ class AdminController extends Controller
             }
 
             $guest->status = 'approved';
+
+            if($guest->bihar_credit_card == 1 || $guest->tnsd == 1){
+                $guest->is_postpaid = 1;
+
+                $user = User::create([
+                    'name' => $guest->name,
+                    'gender' => $guest->gender,
+                    'email' => $guest->email,
+                    'university_id' => $admin->university_id,
+                    'password' => Hash::make('12345678'),
+                ]);
+
+                $residentRole = Role::where('name', 'resident')->firstOrFail();
+                $user->roles()->attach($residentRole->id, ['model_type' => User::class]);
+
+                $resident = Resident::create([
+                    'name' => $guest->name,
+                    'email' => $guest->email,
+                    'gender' => $guest->gender,
+                    'scholar_no' => $guest->scholar_no,
+                    'number' => $guest->number,
+                    'parent_no' => $guest->parent_no,
+                    'guardian_no' => $guest->guardian_no,
+                    'mothers_name' => $guest->mothers_name,
+                    'fathers_name' => $guest->fathers_name,
+                    'user_id' => $user->id,
+                    'guest_id' => $guest->id,
+                    'status' => 'pending',
+                    'created_by' => $admin->id,
+                ]);
+
+                Invoice::where('guest_id', $guest->id)->update(['resident_id' => $resident->id]);
+
+            }
+
             $guest->save();
 
             return $this->apiResponse(true, 'Guest approved successfully.', [
                 'guest' => [
                     'id' => $guest->id,
                     'status' => $guest->status,
-                ]
+                ], $resident ?? null, $user ?? null
             ]);
         } catch (ValidationException $e) {
             return $this->apiResponse(false, 'Validation failed.', null, 422, $e->errors());
@@ -215,13 +258,13 @@ class AdminController extends Controller
                 'room_preference' => 'sometimes|string|max:255',
                 'food_preference' => 'sometimes|string|max:255',
                 'months' => 'nullable|integer|min:1|max:12',
-                'accessory_head_ids' => 'nullable|array',
-                'accessory_head_ids.*' => 'exists:accessory_heads,id',
+                'accessories' => 'nullable|array',
+                'accessories.*' => 'required|exists:accessory,id',
                 'fee_waiver' => 'nullable|in:0,1',
                 'bihar_credit_card' => 'nullable|in:0,1',
                 'tnsd' => 'nullable|in:0,1',
                 'is_verified' => 'nullable|in:0,1',
-                'status' => 'nullable|in:pending,verified,rejected',
+                'status' => 'nullable|in:pending,approved,verified,rejected',
                 'remarks' => [
                     'nullable',
                     'string',
@@ -231,13 +274,17 @@ class AdminController extends Controller
                 'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             ]);
             $adminId = $request->header('auth-id'); // Admin ID is passed in header
+                        // Accessories selected from form
+            // $selectedAccessories = $request->accessories ?? []; // array of [id => price]
+            $months = $request->months ?? 1;
+
             if(!$adminId)
             {
                 return $this->apiResponse(false, 'Unauthorized.', null, 401);
             }
             $guest = Guest::findOrFail($guest_id);  
             foreach ($validatedData as $key => $value) {
-                if ($key !== 'accessory_head_ids' && $key !== 'attachment') { // Exclude accessory_head_ids and attachment from direct assignment
+                if ($key !== 'accessories' && $key !== 'attachment') { // Exclude accessory_head_ids and attachment from direct assignment
                     $guest->$key = $value;
                 }
             }   
@@ -248,58 +295,73 @@ class AdminController extends Controller
                 $guest->attachment_path = $filePath;
             }
             $guest->is_verified = $request->input('is_verified', $guest->is_verified); // Update verification status
-            // $guest->status = 'verified'; // Update status to 'verified'
+            $guest->status = 'verified'; // Update status to 'verified'
             $guest->created_by = $adminId; // Set the admin who verified
             $guest->save(); // Save the guest details
-            // Handle accessory heads if provided
-            // if (isset($validatedData['accessory_head_ids'])) {
-            //     $accessoryHeadIds = $validatedData['accessory_head_ids'];
-            //     $accessoryData = [];
-            //     foreach ($accessoryHeadIds as $headId) {
-                    
-            //         $accessoryData[$headId] = [
-            //             'from_date' => now()->toDateString(),
-            //             'to_date' => null, // Set to null initially, can be updated later
-            //             'price' => 0, // Default price, can be updated based on your logic
-            //             'total_amount' => 0, // Default total amount, can be updated based on your logic
-            //         ];
-            //     }
-            //     $guest->accessories()->sync($accessoryData); // Sync accessory heads
-            // }
 
-            // Handle accessories if provided
-            $months = $validatedData['months'] ?? 3;
-            if (!empty($validatedData['accessory_head_ids'])) {
-                $fromDate = Carbon::now();
-                $toDate = Carbon::now()->addMonths($months);
 
-                foreach ($validatedData['accessory_head_ids'] as $headId) {
-                    $accessory = Accessory::where('accessory_head_id', $headId)
-                        ->where('is_active', true)
-                        ->latest('from_date')
-                        ->first();
+            $invoice = $guest->invoices()->latest()->first();
+            
+            $grandTotal = 0;
+            // $totalFee = InvoiceItem::where('invoice_id', $invoice->id)
+            //     ->where('item_type', 'fee')
+            //     ->sum('total_amount');
+            // $grandTotal += $totalFee;
+            // Step 2: Existing accessory IDs in invoice_items
+            $existingAccessoryIds = $invoice->items()
+                ->where('item_type', 'accessory')
+                ->pluck('item_id')
+                ->toArray();
 
-                    if ($accessory) {
-                        GuestAccessory::updateOrCreate(
-                        [
-                            'guest_id' => $guest->id,
-                            'accessory_head_id' => $headId,   // 🔑 Unique pair
-                        ],
-                        [
-                            'price'        => $accessory->price,
-                            'total_amount' => $accessory->price * $months,
-                            'from_date'    => $fromDate,
-                            'to_date'      => $toDate,
-                        ]);
-                    }
+            // Step 3: New accessory IDs from request
+            $newAccessoryIds = $request->accessories ?? []; // e.g. [1,2,3]                
+
+            // Step 4: Find what to delete and what to insert
+            $toDelete = array_diff($existingAccessoryIds, $newAccessoryIds);
+            $toAdd    = array_diff($newAccessoryIds, $existingAccessoryIds);
+
+            // Step 5: Delete removed accessories
+            if (!empty($toDelete)) {
+                $invoice->items()
+                    ->where('item_type', 'accessory')
+                    ->whereNot('price', '0') // Do not delete free accessories
+                    ->whereIn('item_id', $toDelete)
+                    ->delete();
+            }
+            // Step 6: Add newly selected accessories
+            foreach ($toAdd as $accId) {
+                $accessory = Accessory::with('accessoryHead')->find($accId);
+                if (!$accessory) {
+                    continue;
                 }
+                // Log::info('Adding accessory to invoice', ['accessory_id' => $accessory->id, 'accessory_head' => $accessory->accessoryHead?->name]);
+                $price  = $accessory->price;
+                $amount = $price * $months;
 
+                $invoice->items()->firstOrCreate([
+                    'item_type'    => 'accessory',
+                    'item_id' => $accessory->id,
+                ],
+                [ // Only if not exists
+                    'description'  => $accessory->accessoryHead?->name,
+                    'price'        => $price,
+                    'from_date'    => now(),
+                    'to_date'      => now()->addDays($months * 30),
+                    'total_amount' => $amount,
+                ]);
+                // $grandTotal += $amount;
             }
 
+            // Step 7: Recalculate totals
+            $grandTotal = $invoice->items()->sum('total_amount');
+            $invoice->update([
+                'total_amount'     => $grandTotal,
+                'remaining_amount' => $grandTotal - $invoice->paid_amount, // in case partially paid
+            ]);
 
 
             return $this->apiResponse(true, 'Guest details updated and verified successfully.', [
-                'guest' => $guest->load('accessories.accessoryHead') // Load accessories with accessory head details
+                'guest' => $guest->load('accessories') // Load accessories with accessory head details
             ], 200);
 
         }

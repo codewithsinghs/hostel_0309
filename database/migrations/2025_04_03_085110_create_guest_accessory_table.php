@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('guest_accessory', function (Blueprint $table) {
             $table->id();
             $table->foreignId('guest_id')->constrained('guests')->onDelete('cascade');
-            $table->foreignId('accessory_head_id')->constrained('accessories')->onDelete('cascade');
+            $table->foreignId('accessory_head_id')->constrained('accessory')->onDelete('cascade');
             $table->decimal('price', 10, 2); // Price per unit
             $table->decimal('total_amount', 10, 2); // Total amount for the accessory
             $table->date('from_date'); // Start date of accessory usage

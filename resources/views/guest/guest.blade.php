@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="container-fluid mt-4">
+<div class="container mt-4">
     <h3 class="mb-3">Guest Request Status</h3>
 
     <div id="mainResponseMessage"></div> {{-- Message container for general messages --}}
@@ -141,7 +141,7 @@ function fetchGuestStatus() {
                         <td>${guest.scholar_no}</td>
                         <td>${guest.is_verified == 1 ? '<span class="badge bg-success">Verified</span>' : '<span class="badge bg-warning text-dark">Pending</span>'}</td>
                         <td><span class="badge ${statusClass}">${displayStatusText}</span></td>
-                        <td>${actionColumn}</td>
+                        <td>${guest.is_postpaid==1?"<span class='badge bg-info text-white'>Post Paid</span>":  actionColumn}</td>
                     </tr>
                 `;
             });

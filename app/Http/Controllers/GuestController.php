@@ -3,54 +3,47 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use Carbon\Carbon;
-use App\Models\Fee;
 use App\Models\Guest;
-use App\Models\Order;
-use App\Helpers\Helper;
-use App\Models\Accessory;
 use Illuminate\Http\Request;
-use App\Models\GuestAccessory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use App\Services\PaytmPaymentService;
+use App\Models\GuestAccessory;
+use App\Models\AccessoryHead;
+use App\Models\Accessory;
+use App\Models\Fee;
+use Carbon\Carbon;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
+use App\Helpers\Helper;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 
 class GuestController extends Controller
 {
     public function register(Request $request)
     {
-        Log::alert($request->all());
+        Log::info('Guest registration request received', ['request' => $request->all()]);
         try {
-            
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:guests,email',
                 'faculty_id'    => 'required|exists:faculties,id',
                 'department_id' => 'required|exists:departments,id',
-                // 'course_id'     => 'required|exists:courses,id',
-                'course'     => 'required|exists:courses,name',
+                'course_id'     => 'required|exists:courses,id',
                 'gender' => 'required|in:Male,Female,Other',
-                // 'scholar_no' => 'required|unique:guests,scholar_no',
-                'scholar_number' => 'required|unique:guests,scholar_no',
+                'scholar_no' => 'required|unique:guests,scholar_no',
                 'fathers_name' => 'required|string|max:255',
                 'mothers_name' => 'required|string|max:255',
                 'local_guardian_name' => 'nullable|string|max:255',
-                //'emergency_no' => 'required|string|max:20',
-                'emergency_contact' => 'required|string|max:20',
-                // 'number' => 'nullable|string|max:20',
-                'mobile' => 'nullable|string|max:20',
-                //'parent_no' => 'nullable|string|max:20',
-                'parent_contact' => 'nullable|string|max:20',
-                //'guardian_no' => 'nullable|string|max:20',
-                'guardian_contact' => 'nullable|string|max:20',
-                'room_preference' => 'nullable|string|max:255',
+                'emergency_no' => 'required|string|max:20',
+                'number' => 'nullable|string|max:20', 
+                'parent_no' => 'nullable|string|max:20', 
+                'guardian_no' => 'nullable|string|max:20', 
+                'room_preference' => 'required|string|max:255', 
                 'months' => 'nullable|integer|min:1|max:12',
-                // 'accessory_head_ids' => 'nullable|array',
-                // 'accessory_head_ids.*' => 'exists:accessory_heads,id',
                 'accessories' => 'nullable|array',
+                'accessories.*' => 'required|exists:accessory,id',
                 'fee_waiver' => 'nullable|in:0,1',
                 'bihar_credit_card' => 'nullable|in:0,1',
                 'tnsd' => 'nullable|in:0,1',
@@ -61,10 +54,7 @@ class GuestController extends Controller
                     'required_if:fee_waiver,1', // Required only if fee_waiver is 1
                 ],
                 'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Optional file attachment (Max 5MB)
-                'agree' => 'nullable',
             ]);
-
-            log::info('Validated', $validatedData);
 
             // Start a database transaction
             DB::beginTransaction();
@@ -83,49 +73,100 @@ class GuestController extends Controller
             $guestData['attachment_path'] = $attachmentPath; // Add the attachment path
 
             // Ensure fee_waiver is a binary value
-            // $guestData['fee_waiver'] = isset($validatedData['fee_waiver']) ? 1 : 0;
-            // $guestData['bihar_credit_card'] = isset($validatedData['bihar_credit_card']) ? 1 : 0;   
-            // $guestData['tnsd'] = isset($validatedData['tnsd']) ? 1 : 0;
-            $guestData['fee_waiver'] = $validatedData['fee_waiver'] ?? 0;
-            $guestData['bihar_credit_card'] = $validatedData['bihar_credit_card'] ?? 0;
-            $guestData['tnsd'] = $validatedData['tnsd'] ?? 0;
-
+            $guestData['fee_waiver'] = $validatedData['fee_waiver'] ? 1 : 0;
+            $guestData['bihar_credit_card'] = $validatedData['bihar_credit_card'] ? 1 : 0;
+            $guestData['tnsd'] = $validatedData['tnsd'] ? 1 : 0;
 
             // Generate token and token expiry
             $token = Helper::generate_token();
             $guestData['token'] = $token;
             $guestData['token_expiry'] = Helper::generate_token_expiry();
-
+            $guestData['status'] = 'pending';
             // Create the Guest record
             $guest = Guest::create($guestData);
-
             // Log::info("Guest created with ID: " , $guest);
 
-            // Handle accessories if provided
-            if (!empty($validatedData['accessory_head_ids'])) {
-                $fromDate = Carbon::now();
-                $toDate = Carbon::now()->addMonths($months);
+            //fetch active fees
+            $fees = Fee::where('is_active', 1)
+            // ->whereDate('from_date', '<=', now())
+            // ->whereDate('to_date', '>=', now())
+            ->whereHas('feeHead', function ($q) {
+                    $q->where('is_mandatory', 1);
+                })
+            ->get();
+            Log::info("Active fees fetched: ", $fees->toArray());
 
-                foreach ($validatedData['accessory_head_ids'] as $headId) {
-                    $accessory = Accessory::where('accessory_head_id', $headId)
-                        ->where('is_active', true)
-                        ->latest('from_date')
-                        ->first();
+            // Accessories selected from form
+            $selectedAccessories = $request->accessories ?? []; // array of [id => price]
+            $nextId = (Invoice::max('id') ?? 0) + 1;
+            $invoiceNumber = 'INV-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
 
-                    if ($accessory) {
-                        GuestAccessory::create([
-                            'guest_id' => $guest->id,
-                            'accessory_head_id' => $headId,
-                            'price' => $accessory->price,
-                            'total_amount' => $accessory->price * $months,
-                            'from_date' => $fromDate,
-                            'to_date' => $toDate
-                        ]);
+            $invoice = Invoice::create([
+                'guest_id'         => $guest->id,
+                'invoice_number'   => $invoiceNumber,
+                'invoice_date'     => now(),
+                'due_date'         => now()->addDays($months * 30), // Due in 30 days
+                'total_amount'     => 0,
+                'paid_amount'      => 0,
+                'remaining_amount' => 0,
+                'status'           => 'pending', // created but not yet approved
+            ]);
+
+            $grandTotal = 0;
+            // Add Fee Items
+            foreach ($fees as $fee) {
+                // Check if this fee is one-time (like Caution Money)
+                if ($fee->feeHead && $fee->feeHead->is_one_time) {
+                    $alreadyCharged = InvoiceItem::whereHas('invoice', function ($q) use ($guest) {
+                        $q->where('guest_id', $guest->id);
+                    })->where('description', $fee->name)->exists();
+
+                    if ($alreadyCharged) {
+                        continue; // Skip adding this fee again
                     }
+                    // Charge once only
+                    $amount = $fee->amount;
+                    $monthsApplied = 1;
                 }
+                else {
+                    // Normal fees → multiply by months
+                    $amount = $fee->amount * $months;
+                    $monthsApplied = $months;
+                }
+                $invoice->items()->create([
+                    'item_type'    => 'fee',
+                    'item_id'      => $fee->id,
+                    'description'  => $fee->name,
+                    'price'        => $fee->amount,
+                    'from_date'    => now(),
+                    'to_date'      => now()->addDays($monthsApplied * 30),
+                    'total_amount' => $amount,
+                ]);
+                 $grandTotal += $amount;
             }
 
-            // Commit the transaction if everything was successful
+            // Add Accessory Items
+            foreach ($selectedAccessories as $accId) {
+                $accessory = Accessory::with('accessoryHead')->find($accId);
+                $price     = $accessory?->price ?? 0;
+                $amount    = $price * $months;
+                $invoice->items()->create([
+                    'item_type'    => 'accessory',
+                    'item_id'      => $accessory?->id,
+                    'description'  => $accessory?->accessoryHead?->name,
+                    'price'        => $accessory?->price ?? 0,
+                    'total_amount' => $amount,
+                    'from_date'    => now(),
+                    'to_date'      => now()->addDays($months * 30),
+                ]);
+                $grandTotal += $amount;
+            }
+
+            // Update invoice with totals
+            $invoice->update([
+                'total_amount'     => $grandTotal,
+                'remaining_amount' => $grandTotal,
+            ]);
             DB::commit();
 
             return response()->json([
@@ -218,6 +259,7 @@ class GuestController extends Controller
                 }
             }
 
+
             if (!$waiverFeeUpdated) {
                 $hostelFeePerMonth = Fee::whereHas('feeHead', fn($q) => $q->where('name', 'Hostel Fee'))
                     ->where('is_active', true)
@@ -280,13 +322,13 @@ class GuestController extends Controller
     {
         try {
             $user = Helper::get_auth_guest_user($request);
-            $guests = Guest::Where('id', $user->id)
-                // ->Where('is_verified',1)
-                ->with(['accessories.accessoryHead:id,name'])
-                ->whereNotIn('status', ['paid', 'approved', 'rejected', 'waiver_approved', 'waiver_rejected'])
-                ->with('feeException')
-                ->get();
-
+            $guests = Guest::Where('id',$user->id)
+            // ->Where('is_verified',1)
+            ->with(['accessories.accessoryHead:id,name'])
+            ->whereNotIn('status', ['paid', 'approved', 'rejected', 'waiver_approved','waiver_rejected'])
+            ->with('feeException')
+            ->get();
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Pending guests with accessories fetched successfully',
@@ -311,13 +353,13 @@ class GuestController extends Controller
             // Only fetch guests whose status is NOT 'paid' or 'rejected'
             $guests = Guest::whereHas('faculty', function ($q) use ($user) {
                 $q->where('university_id', $user->university_id);
-            })
-                ->with([
-                    'accessories.accessoryHead:id,name'
-                ])
-                ->where('status', 'pending')
-                ->where('is_verified', 1)
-                ->get();
+            }) 
+            ->with([
+                'accessories.accessory'
+            ])
+            ->where('status', 'pending')
+            ->where('is_verified', 1)
+            ->get();
 
             return response()->json([
                 'success' => true,
@@ -342,12 +384,12 @@ class GuestController extends Controller
             $user = \App\Models\User::find(request()->header('auth-id'));
             // Only fetch guests whose status is NOT 'paid' or 'rejected'
             $guests = Guest::with([
-                'accessories.accessoryHead:id,name'
+                'accessories'
             ])
-                ->whereHas('faculty', function ($q) use ($user) {
-                    $q->where('university_id', $user->university_id);
-                })
-                ->get();
+            ->whereHas('faculty', function($q) use ($user) {
+                $q->where('university_id', $user->university_id);
+            })
+            ->get();
 
             return response()->json([
                 'success' => true,
@@ -366,11 +408,12 @@ class GuestController extends Controller
     }
 
 
-    public function getPaidGuests(Request $request)
+    public function getPaidGuests(Request $request) 
     {
+        Log::info('Fetching paid guests');
         try {
-            $user = Helper::get_auth_guest_user($request);
-            $guests = Guest::find($user->id)->where('status', 'paid')->get();
+            $guests = Guest::where('status', 'paid')->get();
+            Log::info("Paid Guests fetched: " . json_encode($guests));
 
             if ($guests->isEmpty()) {
                 return response()->json([
@@ -402,7 +445,7 @@ class GuestController extends Controller
     {
         try {
             $user = Helper::get_auth_guest_user($request);
-            $guests = Guest::where('id', $user->id)->whereIn('status', ['approved', 'rejected', 'pending', 'waiver_approved', 'waiver_rejected'])->get();
+            $guests = Guest::where('id',$user->id)->whereIn('status', ['approved', 'rejected', 'pending', 'waiver_approved', 'waiver_rejected'])->get();
 
             return response()->json([
                 'success' => true,
@@ -469,9 +512,7 @@ class GuestController extends Controller
     public function guestDetails($guest_id)
     {
         try {
-            $guest = Guest::with(['accessories.accessoryHead:id,name'])
-                ->where('id', $guest_id)
-                ->firstOrFail();
+            $guest = Guest::with('accessories')->find($guest_id);
             return response()->json([
                 'success' => true,
                 'message' => 'Guest details fetched successfully',
@@ -494,6 +535,12 @@ class GuestController extends Controller
             ], 500);
         }
     }
+
+
+
+
+
+
 
 
     public function initiateGuestPayment(Request $request, PaytmPaymentService $paytm)
@@ -545,65 +592,5 @@ class GuestController extends Controller
                 'body' => $paytmParams['body']       // contains MID, ORDER_ID, TXN_AMOUNT, CHECKSUMHASH, etc.
             ]
         ]);
-    }
-
-
-    public function retry(Request $request)
-    {
-        $orderId = $request->query('order');
-
-        if (!$orderId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Missing order ID.'
-            ], 400);
-        }
-
-        $order = Order::find($orderId);
-
-        if (!$order) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Order not found.'
-            ], 404);
-        }
-
-        // Extract user data from the order
-        $userData = json_decode($order->user_data, true);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Order retrieved successfully.',
-            'order_id' => $order->id,
-            'amount' => $order->amount,
-            'payment_method' => $order->payment_method ?? null,
-            'remarks' => $userData['remarks'] ?? null,
-            'guest_id' => $userData['guest_id'] ?? null,
-            'accessory_head_ids' => $userData['accessory_head_ids'] ?? [],
-            'retry_url' => url("/api/payments/initiate") // or wherever you re-initiate
-        ]);
-    }
-
-
-    public static function generateOrderId()
-    {
-        $count = Order::count();
-        $seq = $count + 1;
-        $seqStr = strval($seq);
-
-        // Pad to minimum 4 digits
-        if (strlen($seqStr) < 4) {
-            $seqStr = str_pad($seqStr, 4, '0', STR_PAD_LEFT);
-        }
-
-        // Replace each '0' with a random uppercase letter
-        $seqStr = preg_replace_callback('/0/', function () {
-            return chr(rand(65, 90)); // A–Z
-        }, $seqStr);
-
-        $prefix = 'G-ORD';
-        $date = now()->format('ymd'); // e.g. 250826
-
-        return "{$prefix}{$date}{$seqStr}";
     }
 }

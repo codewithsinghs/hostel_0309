@@ -10,9 +10,9 @@ return new class extends Migration {
             Schema::create('student_accessory', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('resident_id')->constrained('residents')->onDelete('cascade');
-                $table->foreignId('accessory_head_id')->constrained('accessories')->onDelete('cascade'); // Ensure table name is correct
+                $table->foreignId('accessory_head_id')->constrained('accessory')->onDelete('cascade'); // Ensure table name is correct
                 $table->decimal('price', 8, 2);
-                $table->decimal('total_amount', 10, 2)->default(0); // Add totsal_amount column
+                $table->decimal('total_amount', 10, 2)->default(0); // Add total_amount column
                 $table->date('from_date'); 
                 $table->date('to_date'); 
                 $table->date('due_date'); 

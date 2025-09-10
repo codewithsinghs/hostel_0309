@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccessoryHead extends Model
 {
-    protected $table = 'accessories_heads';
+    protected $table = 'accessory_heads';
 
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'university_id',
         'created_by',
         'university_id',
     ];
@@ -25,7 +24,4 @@ class AccessoryHead extends Model
     {
         return $this->hasMany(StudentAccessory::class);
     }
-
-    
-
 }

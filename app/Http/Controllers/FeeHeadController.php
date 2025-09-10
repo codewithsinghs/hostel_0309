@@ -8,6 +8,8 @@ use App\Models\FeeHead;
 use App\Http\Controllers\Controller;
 use PHPUnit\TextUI\Help;
 use App\Helpers\Helper;
+use Illuminate\Validation\Rule;
+use Exception;
 
 class FeeHeadController extends Controller
 {
@@ -33,8 +35,20 @@ class FeeHeadController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Helper::get_auth_admin_user($request);
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:fee_heads,name'           
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('fee_heads', 'name')
+                    ->where(function ($q) use ($user) {
+                        return $q->where('university_id', $user->university_id);
+                    }),
+            ],
+            'is_mandatory' => 'required|boolean',
+            'is_one_time' => 'required|boolean',
+            'status' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -44,7 +58,11 @@ class FeeHeadController extends Controller
         try {
             $feeHead = FeeHead::create([
                 'name' => $request->name,
-                'created_by' => Helper::get_auth_admin_user($request)->id,
+                'created_by' => $user->id,
+                'is_mandatory' => $request->is_mandatory,
+                'is_one_time' => $request->is_one_time,
+                'status' => $request->status,
+                'university_id' => $user->university_id,
             ]);
 
             return $this->apiResponse(true, 'Fee head created successfully.', $feeHead, 201);
@@ -59,7 +77,10 @@ class FeeHeadController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:fee_heads,name,' . $id,
+            'name' => 'required|string|max:255',
+            'is_mandatory' => 'required|boolean',
+            'is_one_time' => 'required|boolean',
+            'status' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -69,6 +90,9 @@ class FeeHeadController extends Controller
         try {
             $feeHead = FeeHead::findOrFail($id);
             $feeHead->name = $request->name;
+            $feeHead->is_mandatory = $request->is_mandatory;
+            $feeHead->is_one_time = $request->is_one_time;
+            $feeHead->status = $request->status;
             $feeHead->save();
 
             return $this->apiResponse(true, 'Fee head updated successfully.', $feeHead);
@@ -82,11 +106,11 @@ class FeeHeadController extends Controller
     /**
      * Get all fee heads
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = Helper::get_auth_admin_user($request);
         try {
-            $feeHeads = FeeHead::orderBy('created_at', 'desc')->get();
-
+            $feeHeads = FeeHead::with('university')->where('university_id', $user->university_id)->orderBy('created_at', 'desc')->get();
             return $this->apiResponse(true, 'Fee heads retrieved successfully.', $feeHeads);
         } catch (\Exception $e) {
             return $this->apiResponse(false, 'Failed to retrieve fee heads.', null, 500, ['error' => $e->getMessage()]);

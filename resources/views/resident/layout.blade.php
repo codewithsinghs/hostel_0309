@@ -140,7 +140,7 @@
         <a href="{{ route('resident.submit_grievance') }}" class="nav-link"><i class="fas fa-exclamation-circle"></i> Grievances</a>
         <a href="{{ url('/resident/grievance_status') }}" class="nav-link"><i class="fas fa-file-alt"></i> Grievance Status</a>
         <a href="{{ url('/resident/accessories') }}" class="nav-link"><i class="fas fa-tools"></i> Accessories</a>
-        <a href="{{ url('/resident/payment') }}" class="nav-link"><i class="fas fa-money-bill"></i> Accessory Payments</a>
+        <a href="{{ url('/resident/payment') }}" class="nav-link"><i class="fas fa-money-bill"></i> Pending Payments</a>
         <a href="{{ url('/resident/feedback') }}" class="nav-link"><i class="fas fa-comment-dots"></i> Feedback</a>
         <a href="{{ url('/resident/notices') }}" class="nav-link"><i class="fas fa-bell"></i> Notices</a>
         <a href="{{ url('/resident/fine') }}" class="nav-link"><i class="fas fa-gavel text-danger"></i> Fine Payments</a>

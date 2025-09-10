@@ -14,7 +14,7 @@ use App\Models\RoomChangeMessage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Helper;
-
+use App\Models\BedAssignmentHistory;
 
 class RoomChangeController extends Controller
 {
@@ -299,6 +299,7 @@ class RoomChangeController extends Controller
             }
 
             $resident = $roomRequest->resident;
+
             if (!$resident) {
                 return response()->json([
                     'success' => false,
@@ -310,11 +311,36 @@ class RoomChangeController extends Controller
 
             $roomRequest->update(['action' => 'completed']);
 
+            $bedAssignmentHistory = BedAssignmentHistory::where('resident_id', $resident->id)
+                                    ->whereNull('discharged_at')
+                                    ->latest()
+                                    ->first();
+
             if ($resident->bed_id) {
+                // Free the old bed
                 $bed = Bed::find($resident->bed_id);
                 if ($bed) {
                     $bed->update(['status' => 'available']);
+                    // Update resident's bed to new bed
                     $resident->update(['bed_id' => $request->new_bed_id]);                
+                    // Close previous bed assignment history
+                    if ($bedAssignmentHistory) {
+                        if ($bedAssignmentHistory) {
+                            $bedAssignmentHistory->update([
+                                'discharged_at' => now(),
+                                'notes' => 'Bed vacated due to room change',
+                            ]);
+                        }
+                        // Create new bed assignment history
+                        BedAssignmentHistory::create([
+                            'bed_id' => $request->new_bed_id,
+                            'resident_id' => $resident->id,
+                            'assigned_at' => now(),
+                            'discharged_at' => null,
+                            'notes' => 'Bed assigned due to room change',
+                        ]);                        
+                    }
+
                 }
                 $newBed=Bed::find($request->new_bed_id);
                 if ($newBed) {

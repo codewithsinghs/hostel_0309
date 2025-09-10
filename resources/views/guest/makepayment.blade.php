@@ -93,28 +93,28 @@
                 <h3 class="mb-4 text-center text-primary">Guest Payment Form</h3>
 
                 @php
-                    use App\Models\Accessory; // Ensure this model is correctly imported and exists
+                use App\Models\Accessory; // Ensure this model is correctly imported and exists
 
-                    $guest_id = request()->query('guest_id');
-                    $amount = request()->query('amount'); // Still needed here for display only
-                    $accessory_ids = request()->query('accessory_ids', []);
+                $guest_id = request()->query('guest_id');
+                $amount = request()->query('amount'); // Still needed here for display only
+                $accessory_ids = request()->query('accessory_ids', []);
 
-                    // Ensure accessory_ids is an array, handle comma-separated string if passed
-                    if (!is_array($accessory_ids)) {
-                        $accessory_ids = explode(',', $accessory_ids);
-                    }
+                // Ensure accessory_ids is an array, handle comma-separated string if passed
+                if (!is_array($accessory_ids)) {
+                $accessory_ids = explode(',', $accessory_ids);
+                }
 
-                    $accessory_head_ids = [];
+                $accessory_head_ids = [];
 
-                    // Fetch accessory_head_ids from Accessory model
-                    foreach ($accessory_ids as $accessory_id) {
-                        $accessory = Accessory::find($accessory_id);
-                        if ($accessory && $accessory->accessory_head_id) {
-                            $accessory_head_ids[] = $accessory->accessory_head_id;
-                        }
-                    }
-                    // Remove duplicates if any, as accessory_head_ids might repeat
-                    $accessory_head_ids = array_unique($accessory_head_ids);
+                // Fetch accessory_head_ids from Accessory model
+                foreach ($accessory_ids as $accessory_id) {
+                $accessory = Accessory::find($accessory_id);
+                if ($accessory && $accessory->accessory_head_id) {
+                $accessory_head_ids[] = $accessory->accessory_head_id;
+                }
+                }
+                // Remove duplicates if any, as accessory_head_ids might repeat
+                $accessory_head_ids = array_unique($accessory_head_ids);
                 @endphp
 
                 <form id="paymentForm">
@@ -124,8 +124,8 @@
                     {{-- The 'amount' hidden input is REMOVED to prevent client-side manipulation --}}
 
                     {{-- Dynamically add hidden inputs for each accessory_head_id --}}
-                    @foreach ($accessory_head_ids as $head_id)
-                        <input type="hidden" name="accessory_head_ids[]" value="{{ $head_id }}">
+                    @foreach($accessory_head_ids as $head_id)
+                    <input type="hidden" name="accessory_head_ids[]" value="{{ $head_id }}">
                     @endforeach
 
                     <div class="mb-3">
@@ -135,8 +135,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="payment_method" class="form-label">Payment Method <span
-                                class="text-danger">*</span></label>
+                        <label for="payment_method" class="form-label">Payment Method <span class="text-danger">*</span></label>
                         <select name="payment_method" id="payment_method" class="form-select" required>
                             <option value="" disabled selected>Select Payment Method</option>
                             <option value="Cash">Cash</option>
@@ -150,8 +149,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="transaction_id" class="form-label">Transaction ID (optional, but must be
-                            unique)</label>
+                        <label for="transaction_id" class="form-label">Transaction ID (optional, but must be unique)</label>
                         <input type="text" name="transaction_id" id="transaction_id" class="form-control">
                         {{-- Validation feedback for transaction_id --}}
                         <div class="invalid-feedback" id="transaction_id_error"></div>
@@ -159,8 +157,7 @@
 
                     <div class="mb-3">
                         <label for="remarks" class="form-label">Remarks</label>
-                        <input type="text" name="remarks" id="remarks" class="form-control"
-                            value="Advance payment for hostel">
+                        <input type="text" name="remarks" id="remarks" class="form-control" value="Advance payment for hostel">
                         {{-- Validation feedback for remarks --}}
                         <div class="invalid-feedback" id="remarks_error"></div>
                     </div>
@@ -175,10 +172,8 @@
                      or the user should set their own password. --}}
                 <h4>Your Password for Resident Panel: <strong id="guestPasswordDisplay">12345678</strong></h4>
                 <div class="mt-4 d-flex justify-content-center gap-3">
-                    <button onclick="window.location.href='/guest/dashboard'" class="btn btn-primary">Back to Guest
-                        Panel</button>
-                    <button onclick="window.location.href='/login'" class="btn btn-success">Proceed to Resident
-                        Panel</button>
+                    <button onclick="window.location.href='/guest/dashboard'" class="btn btn-primary">Back to Guest Panel</button>
+                    <button onclick="window.location.href='/login'" class="btn btn-success">Proceed to Resident Panel</button>
                 </div>
             </div>
 
@@ -186,7 +181,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    {{-- <script>
+    <script>
         const form = document.getElementById('paymentForm');
         const successMsg = document.getElementById('successMsg');
         const errorMsg = document.getElementById('errorMsg');
@@ -268,163 +263,7 @@
                     }
                 });
         });
-    </script> --}}
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById('paymentForm');
-            const paymentSection = document.getElementById('paymentSection');
-            let originalPayload = null;
-
-            // 🔹 Create or update dynamic message container
-            function showMessage(type, message) {
-                const container = document.querySelector('.container, .container-fluid');
-                if (!container) return;
-
-                let msgBox = document.getElementById('dynamicMsgBox');
-                if (!msgBox) {
-                    msgBox = document.createElement('div');
-                    msgBox.id = 'dynamicMsgBox';
-                    msgBox.className = 'alert mt-3';
-                    container.prepend(msgBox);
-                }
-
-                msgBox.className = `alert alert-${type} mt-3`;
-                msgBox.innerText = message;
-                msgBox.style.display = 'block';
-            }
-
-            // 🔹 Reset validation + errors
-            function resetFormErrors() {
-                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-                document.querySelectorAll('.invalid-feedback').forEach(el => el.innerText = '');
-                const msgBox = document.getElementById('dynamicMsgBox');
-                if (msgBox) msgBox.style.display = 'none';
-            }
-
-            // 🔹 Redirect to Paytm with hidden form
-            function redirectToPaytm(txnUrl, params) {
-                const paytmForm = document.createElement('form');
-                paytmForm.method = 'POST';
-                paytmForm.action = txnUrl;
-
-                for (const key in params) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = params[key];
-                    paytmForm.appendChild(input);
-                }
-
-                document.body.appendChild(paytmForm);
-                paytmForm.submit();
-            }
-
-            // 🔹 Handle ALL payment results
-            function handlePaymentResponse(response) {
-                const {
-                    payment_status,
-                    order_id,
-                    redirect_url
-                } = response;
-
-                if (payment_status === "TXN_SUCCESS") {
-                    showMessage('success', `✅ Payment successful! Order #${order_id}`);
-                    if (paymentSection) paymentSection.style.display = 'none';
-                    if (redirect_url) window.location.href = redirect_url;
-                } else if (payment_status === "TXN_FAILURE") {
-                    showMessage('danger', "❌ Payment failed. Please try again.");
-                } else if (payment_status === "PENDING") {
-                    showMessage('warning', "⏳ Payment is pending. Please wait for confirmation.");
-                } else {
-                    showMessage('warning', "⚠️ Unknown payment status. Please contact support.");
-                }
-            }
-
-            // 🔹 Handle INITIATE or CALLBACK errors
-            function handlePaymentError(error) {
-                if (error.response) {
-                    const {
-                        status,
-                        data
-                    } = error.response;
-
-                    if (status === 400 && data.message === 'Guest has already paid.') {
-                        showMessage('danger', "❌ Guest has already paid for this accommodation.");
-                    } else if (status === 422 && data.errors) {
-                        for (const field in data.errors) {
-                            const input = document.querySelector(`[name="${field}"]`);
-                            const errorEl = document.getElementById(`${field}_error`);
-                            if (input) input.classList.add('is-invalid');
-                            if (errorEl) errorEl.innerText = data.errors[field][0];
-                        }
-                        showMessage('danger', "❌ Please correct the highlighted errors in the form.");
-                    } else if (status === 500 && data.message) {
-                        showMessage('danger', `❌ Server Error: ${data.message}`);
-                    } else {
-                        showMessage('danger', `❌ ${data.message || 'Payment failed. Please retry.'}`);
-                    }
-                } else if (error.request) {
-                    showMessage('danger', "❌ No response from the server. Please check your network connection.");
-                } else {
-                    showMessage('danger', "❌ An unexpected error occurred. Please try again.");
-                }
-            }
-
-            // 🔹 Payment form submission
-            if (form) {
-                form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    resetFormErrors();
-
-                    const formData = new FormData(form);
-                    const payload = {
-                        guest_id: formData.get('guest_id'),
-                        name: formData.get('name') || 'Guest',
-                        amount: form.querySelector('input[readonly]')?.value || 0,
-                        payment_method: formData.get('payment_method'),
-                        transaction_id: formData.get('transaction_id'),
-                        remarks: formData.get('remarks'),
-                        accessory_head_ids: formData.getAll('accessory_head_ids[]')
-                    };
-
-                    originalPayload = payload;
-
-                    try {
-                        const response = await axios.post('/api/payments/initiate', payload, {
-                            headers: {
-                                'Accept': 'application/json',
-                                'token': localStorage.getItem('token'),
-                                'auth-id': localStorage.getItem('auth-id')
-                            }
-                        });
-
-                        if (response.data.success && response.data.paytm_params) {
-                            const {
-                                txnUrl,
-                                body
-                            } = response.data.paytm_params;
-                            redirectToPaytm(txnUrl, body);
-                        } else if (response.data.responseData) {
-                            handlePaymentResponse(response.data.responseData);
-                        } else {
-                            showMessage('danger', "❌ Payment initiation failed. Please try again.");
-                        }
-                    } catch (error) {
-                        handlePaymentError(error);
-                    }
-                });
-            }
-
-            // 🔹 Auto-handle callback if server injects response JSON
-            if (window.paymentCallbackData) {
-                handlePaymentResponse(window.paymentCallbackData);
-            }
-        });
     </script>
-
-
 </body>
 
 </html>
