@@ -376,7 +376,7 @@
                     <p><strong>Name:</strong> ${resident.name || 'N/A'}</p>
                     <p><strong>Email:</strong> ${resident.email || 'N/A'}</p>
                     <p><strong>Gender:</strong> ${resident.gender || 'N/A'}</p>
-                    <p><strong>Scholar No.:</strong> ${resident.scholar_no || 'N/A'}</p>
+                    <p><strong>Scholar No.:</strong> ${resident.scholar_number || 'N/A'}</p>
                     <p><strong>Father's Name:</strong> ${resident.fathers_name || 'N/A'}</p>
                     <p><strong>Mother's Name:</strong> ${resident.mothers_name || 'N/A'}</p>
                     <p><strong>Current Status:</strong> ${resident.status || 'N/A'}</p>

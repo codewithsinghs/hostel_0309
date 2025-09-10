@@ -184,15 +184,15 @@
 
             if (paginatedResidents.length > 0) {
                 paginatedResidents.forEach((resident, index) => {
-                    const phoneNumber = resident.guest ? resident.guest.emergency_no : 'N/A';
+                    const phoneNumber = resident.guest ? resident.guest.emergency_contact : 'N/A';
 
                     const row = `
-                    <tr data-scholar="${resident.scholar_no ? resident.scholar_no.toLowerCase() : ''}"
+                    <tr data-scholar="${resident.scholar_number ? resident.scholar_number.toLowerCase() : ''}"
                         data-name="${resident.name ? resident.name.toLowerCase() : ''}"
                         data-email="${resident.email ? resident.email.toLowerCase() : ''}"
                         data-number="${phoneNumber.toLowerCase()}">
                         <td>${start + index + 1}</td>
-                        <td>${resident.scholar_no ?? 'N/A'}</td>
+                        <td>${resident.scholar_number ?? 'N/A'}</td>
                         <td>${resident.name ?? 'N/A'}</td>
                         <td>${resident.email ?? 'N/A'}</td>
                         <td>${resident.gender ?? 'N/A'}</td>
@@ -256,10 +256,10 @@
                 filteredResidents = residentsData;
             } else {
                 filteredResidents = residentsData.filter(resident => {
-                    const scholarNo = resident.scholar_no ? resident.scholar_no.toLowerCase() : '';
+                    const scholarNo = resident.scholar_number ? resident.scholar_number.toLowerCase() : '';
                     const name = resident.name ? resident.name.toLowerCase() : '';
                     const email = resident.email ? resident.email.toLowerCase() : '';
-                    const phoneNumber = resident.guest && resident.guest.emergency_no ? resident.guest.emergency_no.toLowerCase() : '';
+                    const phoneNumber = resident.guest && resident.guest.emergency_contact ? resident.guest.emergency_contact.toLowerCase() : '';
 
                     return scholarNo.includes(currentSearchQuery) ||
                         name.includes(currentSearchQuery) ||

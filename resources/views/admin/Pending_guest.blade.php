@@ -362,12 +362,12 @@
                         guestList.innerHTML += `
                         <tr id="guest-${guest.id}">
                             <td>${index + 1}</td>
-                            <td>${guest.scholar_no || 'N/A'}</td>
+                            <td>${guest.scholar_number || 'N/A'}</td>
                             <td>${guest.name || '-'}</td>
                             <td>${guest.fathers_name || 'N/A'}</td>
                             <td>${guest.mothers_name || 'N/A'}</td>
                             <td>${guest.local_guardian_name || 'N/A'}</td>
-                            <td>${guest.emergency_no || 'N/A'}</td>
+                            <td>${guest.emergency_contact || 'N/A'}</td>
                             <td>${guest.gender || '-'}</td>
                             <td>${guest.room_preference || 'N/A'}</td>
                             <td>${guest.food_preference || 'N/A'}</td>
@@ -574,7 +574,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Price</th>
-                            <th>Duration</th>
+                            <!-- <th>Duration</th> -->
                             <th>From Date</th>
                             <th>To Date</th>
                              <th>Total Amount</th>
@@ -585,9 +585,7 @@
                                         <tr>
                                             <td>${item.accessory_head ? item.accessory_head.name : 'N/A'}</td>
                                             <td>${item.pivot ? item.pivot.price : 'N/A'}</td>
-                                       <td>
-          ${item.pivot ? formatDateDifference(item.pivot.from_date, item.pivot.to_date) : 'N/A'}
-        </td>
+        
 
                                             <td>${item.pivot ? item.pivot.from_date : 'N/A'}</td>
                                             <td>${item.pivot ? item.pivot.to_date || 'N/A' : 'N/A'}</td>
@@ -603,6 +601,10 @@
             const accessoryModal = new bootstrap.Modal(document.getElementById('accessoryModal'));
             accessoryModal.show();
         };
+
+        //                                <td>
+        //   ${item.pivot ? formatDateDifference(item.pivot.from_date, item.to_date) : 'N/A'}
+        // </td>
 
         let editAmountModal;
         let reviewRejectModal;

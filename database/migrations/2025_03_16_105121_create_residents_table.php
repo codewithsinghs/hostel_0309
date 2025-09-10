@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('gender');
             $table->string('scholar_number')->unique();
-            $table->string('number')->nullable();
-            $table->string('parent_no')->nullable();
-            $table->string('guardian_no')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('parent_contact')->nullable();
+            $table->string('guardian_contact')->nullable();
             $table->string('fathers_name');
             $table->string('mothers_name');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // The resident user

@@ -131,7 +131,7 @@ function fetchGuestStatus() {
                 guestList.innerHTML += `
                     <tr>
                         <td>${serialNumber++}</td>
-                        <td>${guest.scholar_no}</td>
+                        <td>${guest.scholar_number}</td>
                         <td><span class="badge ${statusClass}">${displayStatusText}</span></td>
                         <td>${actionColumn}</td>
                     </tr>

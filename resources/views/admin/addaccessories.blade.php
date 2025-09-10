@@ -77,7 +77,7 @@
             residents.forEach(resident => {
                 const option = document.createElement('option');
                 option.value = resident.id;
-                option.textContent = `${resident.name} (${resident.scholar_no})`;
+                option.textContent = `${resident.name} (${resident.scholar_number})`;
                 residentDropdown.appendChild(option);
             });
 

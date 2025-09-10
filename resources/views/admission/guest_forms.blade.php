@@ -64,10 +64,10 @@
                     guestsList.append(`
                         <tr>
                             <td>${index + 1}</td>
-                            <td>${guest.scholar_no || 'N/A'}</td>
+                            <td>${guest.scholar_number || 'N/A'}</td>
                             <td>${guest.name || 'N/A'}</td>
                             <td>${guest.email || 'N/A'}</td>
-                            <td>${guest.emergency_no || 'N/A'}</td>
+                            <td>${guest.emergency_contact || 'N/A'}</td>
                             <td>${guest.gender || 'N/A'}</td>
                             <td>${guest.is_verified == 1?'Verified':'Pending'}</td>
                             <td>${guest.status || 'N/A'}</td>

@@ -91,7 +91,7 @@ Route::middleware(['guest_api_auth'])->group(function () {
     Route::get('/guest/total-amount', [GuestController::class, 'getGuestTotalAmount']);
     Route::get('/guests/paid', [GuestController::class, 'getPaidGuests']);
     Route::get('/guests/pending', [GuestController::class, 'pendingGuests']);
-    Route::get('guests/accessories/active', [AccessoryController::class, 'guestActiveAccessories']);
+    // Route::get('guests/accessories/active', [AccessoryController::class, 'guestActiveAccessories']);
 
     Route::post('guests/guest-payments', [PaymentController::class, 'guestPayment']); // Guest makes payment
 
@@ -565,53 +565,53 @@ Route::prefix('notifications')->group(function () {
 });
 
 
-Route::get('/accessories', [AccessoryController::class, 'index']);
-Route::post('/register', [NAuthController::class, 'register']);
-Route::post('/login', [NAuthController::class, 'login']);
+// Route::get('/accessories', [AccessoryController::class, 'index']);
+// Route::post('/register', [NAuthController::class, 'register']);
+// Route::post('/login', [NAuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/ndashboard', [NAuthController::class, 'dashboard']);
-    Route::post('/logout', [NAuthController::class, 'logout']);
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::get('/ndashboard', [NAuthController::class, 'dashboard']);
+//     Route::post('/logout', [NAuthController::class, 'logout']);
 
-     Route::patch('/users/{user}/toggle-status', [NAuthController::class, 'toggleStatus']);
-    Route::delete('/users/{user}', [NAuthController::class, 'destroy']);
-    Route::get('/users/{user}', [NAuthController::class, 'show']);
-    Route::post('/users/store', [NAuthController::class, 'store']);
+//      Route::patch('/users/{user}/toggle-status', [NAuthController::class, 'toggleStatus']);
+//     Route::delete('/users/{user}', [NAuthController::class, 'destroy']);
+//     Route::get('/users/{user}', [NAuthController::class, 'show']);
+//     Route::post('/users/store', [NAuthController::class, 'store']);
 
     
-    // Route::prefix('admin')->group(function () {
-    //     Route::apiResource('reports', ReportController::class);
-    //     Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->name('admin.reports.toggle-status');
-    //     Route::apiResource('blogs', BlogController::class);
-    //     Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
-    //     Route::apiResource('posts', PostController::class);
-    //     Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
-    //     Route::apiResource('events', EventController::class);
-    //     Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
+//     // Route::prefix('admin')->group(function () {
+//     //     Route::apiResource('reports', ReportController::class);
+//     //     Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->name('admin.reports.toggle-status');
+//     //     Route::apiResource('blogs', BlogController::class);
+//     //     Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
+//     //     Route::apiResource('posts', PostController::class);
+//     //     Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
+//     //     Route::apiResource('events', EventController::class);
+//     //     Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
     
 
-    // });
+//     // });
 
 
-    Route::prefix('admin')->group(function () {
+//     // Route::prefix('admin')->group(function () {
 
-        Route::middleware(['role:admin|editor|viewer'])->group(function () {
-            Route::apiResource('reports', ReportController::class)->middleware('permission:reports.view');
-            Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->middleware('permission:reports.toggle-status');
+//     //     Route::middleware(['role:admin|editor|viewer'])->group(function () {
+//     //         Route::apiResource('reports', ReportController::class)->middleware('permission:reports.view');
+//     //         Route::patch('reports/{report}/toggle-status', [ReportController::class, 'toggleStatus'])->middleware('permission:reports.toggle-status');
     
-            Route::apiResource('blogs', BlogController::class);
-            Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
+//     //         Route::apiResource('blogs', BlogController::class);
+//     //         Route::patch('blogs/{blog}/status', [BlogController::class, 'toggleStatus']);
     
-            Route::apiResource('posts', PostController::class);
-            Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
+//     //         Route::apiResource('posts', PostController::class);
+//     //         Route::patch('posts/{post}/status', [PostController::class, 'toggleStatus']);
     
-            Route::apiResource('events', EventController::class);
-            Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
-        });
-    });
+//     //         Route::apiResource('events', EventController::class);
+//     //         Route::patch('events/{event}/status', [EventController::class, 'toggleStatus']);
+//     //     });
+//     // });
     
 
-});
+// });
 
 // Route::middleware(['auth:sanctum', 'api.role:admin'])->prefix('admin')->group(function () {
 //     Route::get('reports', [ReportController::class, 'index']);

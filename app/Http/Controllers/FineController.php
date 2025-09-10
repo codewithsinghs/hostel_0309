@@ -453,7 +453,7 @@ class FineController extends Controller
                 $fineData = [
                     'subscription_id' => $subscription->id,
                     'resident_name' => $subscription->resident->name ?? 'N/A',
-                    'resident_scholar_no' => $subscription->resident->scholar_no ?? 'N/A',
+                    'resident_scholar_number' => $subscription->resident->scholar_number ?? 'N/A',
                     'fee_head_name' => $subscription->feeHead->name ?? 'N/A',
                     'subscription_type' => $subscription->subscription_type,
                     'base_fee_per_unit' => $subscription->price,

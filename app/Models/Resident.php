@@ -14,7 +14,7 @@ class Resident extends Model
             'name',
             'email',
             'gender',
-            'scholar_no',
+            'scholar_number',
             'number',
             'parent_no',
             'guardian_no',

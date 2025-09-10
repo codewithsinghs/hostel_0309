@@ -69,7 +69,7 @@
                     residentList.append(`
                         <tr>
                             <td>${index + 1}</td>
-                            <td>${resident.scholar_no ?? 'N/A'}</td>
+                            <td>${resident.scholar_number ?? 'N/A'}</td>
                             <td>${resident.name ?? 'N/A'}</td>
                             <td>${resident.email ?? 'N/A'}</td>
                             <td>${resident.gender ?? 'N/A'}</td> {{-- Changed from guest.gender to resident.gender based on API --}}

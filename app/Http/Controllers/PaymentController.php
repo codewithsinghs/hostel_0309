@@ -84,7 +84,7 @@ class PaymentController extends Controller
                 'name' => $guest->name,
                 'email' => $guest->email,
                 'gender' => $guest->gender,
-                'scholar_no' => $guest->scholar_no,
+                'scholar_number' => $guest->scholar_number,
                 'number' => $guest->number,
                 'parent_no' => $guest->parent_no,
                 'guardian_no' => $guest->guardian_no,
@@ -634,7 +634,7 @@ class PaymentController extends Controller
     //                 'student_accessory_id' => $payment->student_accessory_id,
     //                 'accessory_name' => $payment->studentAccessory->accessory->name ?? 'N/A',
     //                 'resident_name' => $payment->resident->user->name ?? 'N/A',
-    //                 'scholar_no' => $payment->resident->guest->scholar_no ?? 'N/A',
+    //                 'scholar_number' => $payment->resident->guest->scholar_number ?? 'N/A',
     //             ];
     //         });
 
@@ -688,7 +688,7 @@ $latestPaymentId = Payment::where('resident_id', $resident_id)
             'student_accessory_id' => $payment->student_accessory_id,
             'accessory_name' => $payment->studentAccessory->accessoryHead->name ?? 'N/A',
             'resident_name' => $payment->resident->user->name ?? 'N/A',
-            'scholar_no' => $payment->resident->guest->scholar_no ?? 'N/A'
+            'scholar_number' => $payment->resident->guest->scholar_number ?? 'N/A'
         ];
     });
 

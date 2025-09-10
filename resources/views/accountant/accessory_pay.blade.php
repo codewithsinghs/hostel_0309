@@ -15,8 +15,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="scholar_no" class="form-label">Scholar Number</label>
-            <input type="text" id="scholar_no" class="form-control" readonly />
+            <label for="scholar_number" class="form-label">Scholar Number</label>
+            <input type="text" id="scholar_number" class="form-control" readonly />
         </div>
 
         <div class="mb-3">
@@ -99,16 +99,16 @@
                     const resident = (response.data || []).find(r => r.id == residentIdFromUrl);
                     if (resident) {
                         $('#resident_name').val(resident.name);
-                        $('#scholar_no').val(resident.scholar_no);
+                        $('#scholar_number').val(resident.scholar_number);
                     } else {
                         $('#resident_name').val('Resident Not Found');
-                        $('#scholar_no').val('N/A');
+                        $('#scholar_number').val('N/A');
                     }
                 },
                 error: function(xhr) {
                     console.error("Error fetching resident details:", xhr);
                     $('#resident_name').val('Error Loading');
-                    $('#scholar_no').val('Error Loading');
+                    $('#scholar_number').val('Error Loading');
                 }
             });
 

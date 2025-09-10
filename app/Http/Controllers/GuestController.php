@@ -20,37 +20,209 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class GuestController extends Controller
 {
+    // public function register(Request $request)
+    // {
+    //     $request->merge([
+    //         'accessories' => is_string($request->accessories)
+    //             ? json_decode($request->accessories, true)
+    //             : $request->accessories
+    //     ]);
+
+    //     Log::alert($request->all());
+    //     try {
+
+    //         $validatedData = $request->validate([
+    //             'name' => 'required|string|max:255',
+    //             'email' => 'required|email|unique:guests,email',
+    //             'faculty_id'    => 'required|exists:faculties,id',
+    //             'department_id' => 'required|exists:departments,id',
+    //             // 'course_id'     => 'required|exists:courses,id',
+    //             'course_id'     => 'required|exists:courses,id',
+    //             'gender' => 'required|in:Male,Female,Other',
+    //             // 'scholar_number' => 'required|unique:guests,scholar_number',
+    //             'scholar_number' => 'required|unique:guests,scholar_number',
+    //             'fathers_name' => 'required|string|max:255',
+    //             'mothers_name' => 'required|string|max:255',
+    //             'local_guardian_name' => 'nullable|string|max:255',
+    //             //'emergency_contact' => 'required|string|max:20',
+    //             'emergency_contact' => 'required|string|max:20',
+    //             // 'number' => 'nullable|string|max:20',
+    //             'mobile' => 'nullable|string|max:20',
+    //             //'parent_no' => 'nullable|string|max:20',
+    //             'parent_contact' => 'nullable|string|max:20',
+    //             //'guardian_no' => 'nullable|string|max:20',
+    //             'guardian_contact' => 'nullable|string|max:20',
+    //             'room_preference' => 'nullable|string|max:255',
+    //             'months' => 'nullable|integer|min:1|max:12',
+    //             // 'accessory_head_ids' => 'nullable|array',
+    //             // 'accessory_head_ids.*' => 'exists:accessory_heads,id',
+    //             'accessories' => 'nullable|array',
+    //             'accessories.*' => 'exists:accessories_heads,id',
+    //             'fee_waiver' => 'nullable|in:0,1',
+    //             'bihar_credit_card' => 'nullable|in:0,1',
+    //             'tnsd' => 'nullable|in:0,1',
+    //             'remarks' => [
+    //                 'nullable',
+    //                 'string',
+    //                 'max:1000',
+    //                 'required_if:fee_waiver,1', // Required only if fee_waiver is 1
+    //             ],
+    //             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Optional file attachment (Max 5MB)
+    //             'agree' => 'nullable',
+    //         ]);
+
+    //         Log::info('here');
+
+
+
+    //         // 🔄 Rename attributes to match commented ones
+    //         // $validatedData['course_id'] = \App\Course::where('name', $validatedData['course'])->value('id');
+    //         // unset($validatedData['course']);
+
+    //         // $validatedData['scholar_number'] = $validatedData['scholar_number'];
+    //         // unset($validatedData['scholar_number']);
+
+    //         // $validatedData['emergency_contact'] = $validatedData['emergency_contact'];
+    //         // unset($validatedData['emergency_contact']);
+
+    //         // $validatedData['number'] = $validatedData['mobile'] ?? null;
+    //         // unset($validatedData['mobile']);
+
+    //         // $validatedData['parent_no'] = $validatedData['parent_contact'] ?? null;
+    //         // unset($validatedData['parent_contact']);
+
+    //         // $validatedData['guardian_no'] = $validatedData['guardian_contact'] ?? null;
+    //         // unset($validatedData['guardian_contact']);
+
+    //         $validatedData['accessory_head_ids'] = $validatedData['accessories'];
+
+    //         unset($validatedData['accessories']);
+
+    //         Log::alert('here');
+    //         // Start a database transaction
+    //         DB::beginTransaction();
+
+    //         $months = $validatedData['months'] ?? 3;
+
+    //         $attachmentPath = null;
+    //         // Handle attachment upload if a file is present
+    //         if ($request->hasFile('attachment')) {
+    //             $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+    //         }
+
+    //         // Prepare guest data for creation
+    //         $guestData = collect($validatedData)->except(['accessory_head_ids', 'attachment'])->toArray();
+    //         $guestData['months'] = $months;
+    //         $guestData['attachment_path'] = $attachmentPath; // Add the attachment path
+
+    //         // Ensure fee_waiver is a binary value
+    //         // $guestData['fee_waiver'] = isset($validatedData['fee_waiver']) ? 1 : 0;
+    //         // $guestData['bihar_credit_card'] = isset($validatedData['bihar_credit_card']) ? 1 : 0;   
+    //         // $guestData['tnsd'] = isset($validatedData['tnsd']) ? 1 : 0;
+    //         $guestData['fee_waiver'] = $validatedData['fee_waiver'] ?? 0;
+    //         $guestData['bihar_credit_card'] = $validatedData['bihar_credit_card'] ?? 0;
+    //         $guestData['tnsd'] = $validatedData['tnsd'] ?? 0;
+
+
+    //         // Generate token and token expiry
+    //         $token = Helper::generate_token();
+    //         $guestData['token'] = $token;
+    //         $guestData['token_expiry'] = Helper::generate_token_expiry();
+
+    //         // Create the Guest record
+    //         $guest = Guest::create($guestData);
+
+    //         // Log::info("Guest created with ID: " , $guest);
+
+    //         // Handle accessories if provided
+    //         if (!empty($validatedData['accessory_head_ids'])) {
+    //             $fromDate = Carbon::now();
+    //             $toDate = Carbon::now()->addMonths($months);
+
+    //             foreach ($validatedData['accessory_head_ids'] as $headId) {
+    //                 $accessory = Accessory::where('accessory_head_id', $headId)
+    //                     ->where('is_active', true)
+    //                     ->latest('from_date')
+    //                     ->first();
+
+    //                 if ($accessory) {
+    //                     GuestAccessory::create([
+    //                         'guest_id' => $guest->id,
+    //                         'accessory_head_id' => $headId,
+    //                         'price' => $accessory->price,
+    //                         'total_amount' => $accessory->price * $months,
+    //                         'from_date' => $fromDate,
+    //                         'to_date' => $toDate
+    //                     ]);
+    //                 }
+    //             }
+    //         }
+
+    //         // Commit the transaction if everything was successful
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Guest registered successfully.',
+    //             'data' => $guest,
+    //             'token' => $token,
+    //             'errors' => null
+    //         ], 201);
+    //     } catch (ValidationException $e) {
+    //         // Rollback the transaction on validation failure
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Validation failed',
+    //             'data' => null,
+    //             'errors' => $e->errors()
+    //         ], 422);
+    //     } catch (\Exception $e) { // Catching a general Exception for broader error handling
+    //         // Rollback the transaction on any other unexpected error
+    //         DB::rollBack();
+    //         Log::error('Guest registration failed: ' . $e->getMessage(), ['exception' => $e]); // Log the full exception
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Something went wrong during guest registration.',
+    //             'data' => null,
+    //             'errors' => ['exception' => $e->getMessage()]
+    //         ], 500);
+    //     }
+    // }
+
     public function register(Request $request)
     {
+        // Normalize accessories input
+        $request->merge([
+            'accessories' => is_string($request->accessories)
+                ? json_decode($request->accessories, true)
+                : $request->accessories
+        ]);
+
         Log::alert($request->all());
+
         try {
-            
+            // Validate incoming request
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:guests,email',
-                'faculty_id'    => 'required|exists:faculties,id',
+                'faculty_id' => 'required|exists:faculties,id',
                 'department_id' => 'required|exists:departments,id',
-                // 'course_id'     => 'required|exists:courses,id',
-                'course'     => 'required|exists:courses,name',
+                'course_id' => 'required|exists:courses,id',
                 'gender' => 'required|in:Male,Female,Other',
-                // 'scholar_no' => 'required|unique:guests,scholar_no',
-                'scholar_number' => 'required|unique:guests,scholar_no',
+                'scholar_number' => 'required|unique:guests,scholar_number',
                 'fathers_name' => 'required|string|max:255',
                 'mothers_name' => 'required|string|max:255',
                 'local_guardian_name' => 'nullable|string|max:255',
-                //'emergency_no' => 'required|string|max:20',
                 'emergency_contact' => 'required|string|max:20',
-                // 'number' => 'nullable|string|max:20',
                 'mobile' => 'nullable|string|max:20',
-                //'parent_no' => 'nullable|string|max:20',
                 'parent_contact' => 'nullable|string|max:20',
-                //'guardian_no' => 'nullable|string|max:20',
                 'guardian_contact' => 'nullable|string|max:20',
                 'room_preference' => 'nullable|string|max:255',
                 'months' => 'nullable|integer|min:1|max:12',
-                // 'accessory_head_ids' => 'nullable|array',
-                // 'accessory_head_ids.*' => 'exists:accessory_heads,id',
                 'accessories' => 'nullable|array',
+                'accessories.*' => 'exists:accessory_heads,id',
                 'fee_waiver' => 'nullable|in:0,1',
                 'bihar_credit_card' => 'nullable|in:0,1',
                 'tnsd' => 'nullable|in:0,1',
@@ -58,56 +230,57 @@ class GuestController extends Controller
                     'nullable',
                     'string',
                     'max:1000',
-                    'required_if:fee_waiver,1', // Required only if fee_waiver is 1
+                    'required_if:fee_waiver,1',
                 ],
-                'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Optional file attachment (Max 5MB)
+                'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
                 'agree' => 'nullable',
             ]);
 
-            log::info('Validated', $validatedData);
-
-            // Start a database transaction
             DB::beginTransaction();
 
-            $months = $validatedData['months'] ?? 3;
+            // Handle file upload
+            $attachmentPath = $request->hasFile('attachment')
+                ? $request->file('attachment')->store('attachments', 'public')
+                : null;
 
-            $attachmentPath = null;
-            // Handle attachment upload if a file is present
-            if ($request->hasFile('attachment')) {
-                $attachmentPath = $request->file('attachment')->store('attachments', 'public');
-            }
+            // Prepare data for Guest model
+            $guestData = [
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'faculty_id' => $validatedData['faculty_id'],
+                'department_id' => $validatedData['department_id'],
+                'course_id' => $validatedData['course_id'],
+                'gender' => $validatedData['gender'],
+                'scholar_number' => $validatedData['scholar_number'],
+                'fathers_name' => $validatedData['fathers_name'],
+                'mothers_name' => $validatedData['mothers_name'],
+                'local_guardian_name' => $validatedData['local_guardian_name'] ?? null,
+                'emergency_contact' => $validatedData['emergency_contact'], // ✅ This line is essential
+                'mobile' => $validatedData['mobile'] ?? null,
+                'parent_contact' => $validatedData['parent_contact'] ?? null,
+                'guardian_contact' => $validatedData['guardian_contact'] ?? null,
+                'room_preference' => $validatedData['room_preference'] ?? null,
+                'months' => $validatedData['months'] ?? 3,
+                'fee_waiver' => $validatedData['fee_waiver'] ?? 0,
+                'bihar_credit_card' => $validatedData['bihar_credit_card'] ?? 0,
+                'tnsd' => $validatedData['tnsd'] ?? 0,
+                'remarks' => $validatedData['remarks'] ?? null,
+                'attachment_path' => $attachmentPath,
+                'token' => Helper::generate_token(),
+                'token_expiry' => Helper::generate_token_expiry(),
+            ];
 
-            // Prepare guest data for creation
-            $guestData = collect($validatedData)->except(['accessory_head_ids', 'attachment'])->toArray();
-            $guestData['months'] = $months;
-            $guestData['attachment_path'] = $attachmentPath; // Add the attachment path
 
-            // Ensure fee_waiver is a binary value
-            // $guestData['fee_waiver'] = isset($validatedData['fee_waiver']) ? 1 : 0;
-            // $guestData['bihar_credit_card'] = isset($validatedData['bihar_credit_card']) ? 1 : 0;   
-            // $guestData['tnsd'] = isset($validatedData['tnsd']) ? 1 : 0;
-            $guestData['fee_waiver'] = $validatedData['fee_waiver'] ?? 0;
-            $guestData['bihar_credit_card'] = $validatedData['bihar_credit_card'] ?? 0;
-            $guestData['tnsd'] = $validatedData['tnsd'] ?? 0;
-
-
-            // Generate token and token expiry
-            $token = Helper::generate_token();
-            $guestData['token'] = $token;
-            $guestData['token_expiry'] = Helper::generate_token_expiry();
-
-            // Create the Guest record
+            // Create Guest record
             $guest = Guest::create($guestData);
 
-            // Log::info("Guest created with ID: " , $guest);
-
-            // Handle accessories if provided
-            if (!empty($validatedData['accessory_head_ids'])) {
+            // Handle accessories
+            if (!empty($validatedData['accessories'])) {
                 $fromDate = Carbon::now();
-                $toDate = Carbon::now()->addMonths($months);
+                $toDate = Carbon::now()->addMonths($guestData['months']);
 
-                foreach ($validatedData['accessory_head_ids'] as $headId) {
-                    $accessory = Accessory::where('accessory_head_id', $headId)
+                foreach ($validatedData['accessories'] as $headId) {
+                    $accessory = Accessory::where('accessories_heads_id', $headId)
                         ->where('is_active', true)
                         ->latest('from_date')
                         ->first();
@@ -115,48 +288,46 @@ class GuestController extends Controller
                     if ($accessory) {
                         GuestAccessory::create([
                             'guest_id' => $guest->id,
-                            'accessory_head_id' => $headId,
+                            'accessories_heads_id' => $headId,
                             'price' => $accessory->price,
-                            'total_amount' => $accessory->price * $months,
+                            'total_amount' => $accessory->price * $guestData['months'],
                             'from_date' => $fromDate,
-                            'to_date' => $toDate
+                            'to_date' => $toDate,
                         ]);
                     }
                 }
             }
 
-            // Commit the transaction if everything was successful
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Guest registered successfully.',
                 'data' => $guest,
-                'token' => $token,
-                'errors' => null
+                'token' => $guestData['token'],
+                'errors' => null,
             ], 201);
         } catch (ValidationException $e) {
-            // Rollback the transaction on validation failure
             DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
                 'data' => null,
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
-        } catch (\Exception $e) { // Catching a general Exception for broader error handling
-            // Rollback the transaction on any other unexpected error
+        } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Guest registration failed: ' . $e->getMessage(), ['exception' => $e]); // Log the full exception
+            Log::error('Guest registration failed: ' . $e->getMessage(), ['exception' => $e]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Something went wrong during guest registration.',
                 'data' => null,
-                'errors' => ['exception' => $e->getMessage()]
+                'errors' => ['exception' => $e->getMessage()],
             ], 500);
         }
     }
+
 
     public function getGuestProfile(Request $request)
     {
@@ -201,7 +372,7 @@ class GuestController extends Controller
 
             $guestAccessories = GuestAccessory::where('guest_id', $guest->id)->get();
             $accessoryTotal = $guestAccessories->sum('total_amount');
-            $accessoryHeadIds = $guestAccessories->pluck('accessory_head_id');
+            $accessoryHeadIds = $guestAccessories->pluck('accessories_heads_id');
 
             $hostelFee = 0;
             $messFee = 0;

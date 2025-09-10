@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 li.innerHTML = `
                     <div>
                         <strong>${fine.resident_name}</strong> <br>
-                        <small>${fine.resident_scholar_no}</small>
+                        <small>${fine.resident_scholar_number}</small>
                     </div>
                     <button class="btn btn-sm btn-outline-primary view-btn">Set Amount</button>
                 `;
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 li.querySelector('.view-btn').addEventListener("click", () => {
                     // Fill modal fields
                     document.getElementById("modalResidentName").textContent = fine.resident_name;
-                    document.getElementById("modalScholarNo").textContent = fine.resident_scholar_no;
+                    document.getElementById("modalScholarNo").textContent = fine.resident_scholar_number;
                     document.getElementById("modalAdminRemarks").textContent = fine.admin_remarks || "N/A";
                     document.querySelector("#fineForm [name='subscription_id']").value = fine.subscription_id;
 

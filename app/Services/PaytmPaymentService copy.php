@@ -62,7 +62,56 @@ class PaytmPaymentService
         ];
     }
 
- 
+    // public function verifyCallback(array $payload)
+    // {
+    //     Log::info('verifying');
+    //     $checksum = $payload['CHECKSUMHASH'] ?? '';
+    //     unset($payload['CHECKSUMHASH']);
+
+    //     $isValid = PaytmChecksum::verifySignature($payload, $this->merchantKey, $checksum);
+    //     Log::info('verifying');
+    //     return [
+    //         'valid' => $isValid,
+    //         'data' => $payload,
+    //     ];
+    // }
+
+    // public function verifyCallback($payload)
+    // {
+    //     if ($payload instanceof \Illuminate\Http\Request) {
+    //         $payload = $payload->all();
+    //         Log::info('Received Request object for Paytm callback');
+    //     } elseif (!is_array($payload)) {
+    //         Log::error('Invalid payload type for Paytm callback', ['type' => gettype($payload)]);
+    //         return [
+    //             'valid' => false,
+    //             'data' => [],
+    //         ];
+    //     } else {
+    //         Log::info('Received array payload for Paytm callback');
+    //     }
+
+    //     $checksum = $payload['CHECKSUMHASH'] ?? '';
+    //     unset($payload['CHECKSUMHASH']);
+
+    //     Log::info('Verifying Paytm checksum', [
+    //         'ORDERID' => $payload['ORDERID'] ?? 'N/A',
+    //         'TXNID' => $payload['TXNID'] ?? 'N/A',
+    //     ]);
+
+    //     $isValid = PaytmChecksum::verifySignature($payload, $this->merchantKey, $checksum);
+
+    //     if (!$isValid) {
+    //         Log::warning('Checksum verification failed', ['payload' => $payload]);
+    //     } else {
+    //         Log::info('Checksum verification passed');
+    //     }
+
+    //     return [
+    //         'valid' => $isValid,
+    //         'data' => $payload,
+    //     ];
+    // }
 
     public function verifyCallback($payload): array
     {

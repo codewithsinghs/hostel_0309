@@ -80,8 +80,8 @@
                     <div id="emailError" class="invalid-feedback text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
-                    <label for="scholar_no" class="block text-gray-700 text-sm font-medium mb-1">Scholar Number <span class="required">*</span></label>
-                    <input type="text" name="scholar_no" id="scholar_no" class="form-control w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500" required pattern="[a-zA-Z0-9]+" title="Scholar number must contain only letters and digits (e.g., SCHO123).">
+                    <label for="scholar_number" class="block text-gray-700 text-sm font-medium mb-1">Scholar Number <span class="required">*</span></label>
+                    <input type="text" name="scholar_number" id="scholar_number" class="form-control w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500" required pattern="[a-zA-Z0-9]+" title="Scholar number must contain only letters and digits (e.g., SCHO123).">
                     <div id="scholarNoError" class="invalid-feedback text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
@@ -136,8 +136,8 @@
                     <div id="localGuardianNameError" class="invalid-feedback text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
-                    <label for="emergency_no" class="block text-gray-700 text-sm font-medium mb-1">Emergency Contact Number <span class="required">*</span></label>
-                    <input type="text" name="emergency_no" id="emergency_no" class="form-control w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500" required pattern="[0-9]{10}" title="Emergency contact number must be 10 digits.">
+                    <label for="emergency_contact" class="block text-gray-700 text-sm font-medium mb-1">Emergency Contact Number <span class="required">*</span></label>
+                    <input type="text" name="emergency_contact" id="emergency_contact" class="form-control w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 focus:border-blue-500" required pattern="[0-9]{10}" title="Emergency contact number must be 10 digits.">
                     <div id="emergencyNoError" class="invalid-feedback text-red-500 text-xs mt-1"></div>
                 </div>
                 <div>
@@ -259,12 +259,12 @@
         const errorMessages = {
             name: document.getElementById('nameError'),
             email: document.getElementById('emailError'),
-            scholar_no: document.getElementById('scholarNoError'),
+            scholar_number: document.getElementById('scholarNoError'),
             gender: document.getElementById('genderError'),
             fathers_name: document.getElementById('fathersNameError'),
             mothers_name: document.getElementById('mothersNameError'),
             local_guardian_name: document.getElementById('localGuardianNameError'),
-            emergency_no: document.getElementById('emergencyNoError'),
+            emergency_contact: document.getElementById('emergencyNoError'),
             number: document.getElementById('numberError'), // New
             parent_no: document.getElementById('parentNoError'), // New
             guardian_no: document.getElementById('guardianNoError'), // New

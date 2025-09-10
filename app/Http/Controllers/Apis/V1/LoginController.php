@@ -114,7 +114,7 @@ class LoginController extends Controller
                 'mobile' => ['required', 'regex:/^[6-9]\d{9}$/'], // Indian mobile pattern
             ]);
 
-            if($guest_details = Guest::where('email', $credentials['email'])->where('emergency_no', $credentials['mobile'])->first()) 
+            if($guest_details = Guest::where('email', $credentials['email'])->where('emergency_contact', $credentials['mobile'])->first()) 
             {
                 $token = Helper::generate_token();
                 $guest_details->token = $token;

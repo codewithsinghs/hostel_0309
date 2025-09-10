@@ -200,23 +200,23 @@ class AdminController extends Controller
                 'course_id' => 'sometimes|exists:courses,id',
                 'gender' => 'sometimes|in:Male,Female,Other',
 
-                'scholar_no' => [
+                'scholar_number' => [
                     'sometimes',
-                    Rule::unique('guests', 'scholar_no')->ignore($guest_id), // 👈 Ignore current guest
+                    Rule::unique('guests', 'scholar_number')->ignore($guest_id), // 👈 Ignore current guest
                 ],
 
                 'fathers_name' => 'sometimes|string|max:255',
                 'mothers_name' => 'sometimes|string|max:255',
                 'local_guardian_name' => 'nullable|string|max:255',
-                'emergency_no' => 'sometimes|string|max:20',
+                'emergency_contact' => 'sometimes|string|max:20',
                 'number' => 'nullable|string|max:20',
                 'parent_no' => 'nullable|string|max:20',
                 'guardian_no' => 'nullable|string|max:20',
                 'room_preference' => 'sometimes|string|max:255',
                 'food_preference' => 'sometimes|string|max:255',
                 'months' => 'nullable|integer|min:1|max:12',
-                'accessory_head_ids' => 'nullable|array',
-                'accessory_head_ids.*' => 'exists:accessory_heads,id',
+                'accessories_heads_id' => 'nullable|array',
+                'accessories_heads_id.*' => 'exists:accessory_heads,id',
                 'fee_waiver' => 'nullable|in:0,1',
                 'bihar_credit_card' => 'nullable|in:0,1',
                 'tnsd' => 'nullable|in:0,1',
@@ -237,7 +237,7 @@ class AdminController extends Controller
             }
             $guest = Guest::findOrFail($guest_id);  
             foreach ($validatedData as $key => $value) {
-                if ($key !== 'accessory_head_ids' && $key !== 'attachment') { // Exclude accessory_head_ids and attachment from direct assignment
+                if ($key !== 'accessories_heads_id' && $key !== 'attachment') { // Exclude accessory_head_ids and attachment from direct assignment
                     $guest->$key = $value;
                 }
             }   
@@ -269,12 +269,12 @@ class AdminController extends Controller
 
             // Handle accessories if provided
             $months = $validatedData['months'] ?? 3;
-            if (!empty($validatedData['accessory_head_ids'])) {
+            if (!empty($validatedData['accessories_heads_id'])) {
                 $fromDate = Carbon::now();
                 $toDate = Carbon::now()->addMonths($months);
 
                 foreach ($validatedData['accessory_head_ids'] as $headId) {
-                    $accessory = Accessory::where('accessory_head_id', $headId)
+                    $accessory = Accessory::where('accessories_heads_id', $headId)
                         ->where('is_active', true)
                         ->latest('from_date')
                         ->first();
@@ -283,7 +283,7 @@ class AdminController extends Controller
                         GuestAccessory::updateOrCreate(
                         [
                             'guest_id' => $guest->id,
-                            'accessory_head_id' => $headId,   // 🔑 Unique pair
+                            'accessories_heads_id' => $headId,   // 🔑 Unique pair
                         ],
                         [
                             'price'        => $accessory->price,

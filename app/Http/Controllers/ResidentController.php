@@ -187,14 +187,14 @@ class ResidentController extends Controller
         try {
             $residents = Resident::whereNull('bed_id')
                 ->where('status', 'pending')
-                ->with(['user:id,name', 'guest:id,gender,scholar_no'])
+                ->with(['user:id,name', 'guest:id,gender,scholar_number'])
                 ->get()
                 ->map(function ($resident) {
                     return [
                         'id' => $resident->id,
                         'name' => optional($resident->user)->name,
                         'gender' => optional($resident->guest)->gender,
-                        'scholar_number' => optional($resident->guest)->scholar_no,
+                        'scholar_number' => optional($resident->guest)->scholar_number,
                     ];
                 });
             Log::info('Unassigned residents fetched successfully', ['count' => $residents->count()]);

@@ -138,7 +138,7 @@ function fetchGuestStatus() {
                 guestList.innerHTML += `
                     <tr>
                         <td>${serialNumber++}</td>
-                        <td>${guest.scholar_no}</td>
+                        <td>${guest.scholar_number}</td>
                         <td>${guest.is_verified == 1 ? '<span class="badge bg-success">Verified</span>' : '<span class="badge bg-warning text-dark">Pending</span>'}</td>
                         <td><span class="badge ${statusClass}">${displayStatusText}</span></td>
                         <td>${actionColumn}</td>

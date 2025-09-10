@@ -51,7 +51,7 @@
                                 Scholar Number
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" name="scholar_number" id="scholar_number" placeholder="***********" />
+                            <input type="text" name="scholar_number" id="scholar_number" placeholder="***********" class="form-control" value="012345" />
                             <div id="scholar_numberError" class="invalid-feedback"></div>
                         </div>
 
@@ -60,7 +60,7 @@
                             <label for="name">Full Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="name" id="name" aria-describedby="nameError" required
-                                placeholder="Valid Input" />
+                                placeholder="Valid Input" class="form-control" value="Naman" />
                             <div id="nameError" class="invalid-feedback"></div>
                         </div>
 
@@ -69,7 +69,7 @@
                             <label for="email">Email Address
                                 <span class="text-danger">*</span></label>
                             <input type="email" name="email" id="email" aria-describedby="emailError" required
-                                placeholder="name@gmail.com" />
+                                placeholder="name@gmail.com" class="form-control" value="test@gmail.com"/>
                             <div id="emailError" class="invalid-feedback"></div>
                         </div>
 
@@ -77,8 +77,8 @@
                         <div class="form-field">
                             <label for="mobile">Mobile Number
                                 <span class="text-danger">*</span></label>
-                            <input type="text" name="mobile" id="mobile" pattern="[0-9]{10}"
-                                aria-describedby="mobileError" required placeholder="99999-99999" />
+                            <input type="text" name="mobile" id="mobile" pattern="[0-9]{10}" class="form-control"
+                                aria-describedby="mobileError" required placeholder="99999-99999" value="9874563210"/>
                             <div id="mobileError" class="invalid-feedback"></div>
                         </div>
 
@@ -102,7 +102,7 @@
                         <div class="form-field">
                             <label for="department_id">Select Department
                                 <span class="text-danger">*</span></label>
-                            <select name="department_id" id="department_id" aria-describedby="department_idError">
+                            <select name="department_id" id="department_id" aria-describedby="department_idError" class="form-select">
                                 <option value="">Select Department</option>
                             </select>
                             <div id="department_idError" class="invalid-feedback"></div>
@@ -112,7 +112,7 @@
                         <div class="form-field">
                             <label for="course_id">Select Course
                                 <span class="text-danger">*</span></label>
-                            <select name="course_id" id="course_id" aria-describedby="course_idError">
+                            <select name="course_id" id="course_id" aria-describedby="course_idError" class="form-select">
                                 <option value="">Select Course</option>
                             </select>
                             <div id="course_idError" class="invalid-feedback"></div>
@@ -122,11 +122,11 @@
                         <div class="form-field">
                             <label for="gender">Select gender
                                 <span class="text-danger">*</span></label>
-                            <select name="gender" id="gender" required aria-describedby="genderError">
+                            <select name="gender" id="gender" required aria-describedby="genderError" class="form-select">
                                 <option value="">Select gender</option>
-                                <option value="Male">Male</option>
+                                <option selected value="Male">Male</option>
                                 <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                <!-- <option value="Other">Other</option> -->
                             </select>
                             <div id="genderError" class="invalid-feedback"></div>
                         </div>
@@ -150,7 +150,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <input type="text" name="fathers_name" id="fathers_name" required
-                                aria-describedby="fathersNameError" placeholder="Father's Name" />
+                                aria-describedby="fathersNameError" placeholder="Father's Name" class="form-control" value="Rahul"/>
                             <div id="fatherNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -159,7 +159,7 @@
                             <label for="mothers_name">Mother's Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="mothers_name" id="mothers_name" aria-describedby="mothersNameError"
-                                required placeholder="Mother's Name" />
+                                required placeholder="Mother's Name" class="form-control" value="Rashmi"/>
                             <div id="motherNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -168,7 +168,7 @@
                             <label for="parent_contact">Parent's Contact Number
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="parent_contact" id="parent_contact"
-                                aria-describedby="parent_contactError" required placeholder="99999-99999" />
+                                aria-describedby="parent_contactError" required placeholder="99999-99999" class="form-control" value="9874563210"/>
                             <div id="parent_contactError" class="invalid-feedback"></div>
                         </div>
 
@@ -177,7 +177,7 @@
                             <label for="local_guardian_name">Local Guardian Name
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="local_guardian_name" id="local_guardian_name"
-                                aria-describedby="localGuardianNameError" required placeholder="Valid Input" />
+                                aria-describedby="localGuardianNameError" required placeholder="Valid Input" class="form-control" value="Arpit"/>
                             <div id="localGuardianNameError" class="invalid-feedback"></div>
                         </div>
 
@@ -186,7 +186,7 @@
                             <label for="guardian_contact">Local Guardian's Contact Number
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="guardian_contact" id="guardian_contact"
-                                aria-describedby="guardian_contactError" required placeholder="99999-99999" />
+                                aria-describedby="guardian_contactError" required placeholder="99999-99999"  class="form-control" value="9874563210"/>
                             <div id="guardian_contactError" class="invalid-feedback"></div>
                         </div>
 
@@ -195,7 +195,7 @@
                             <label for="emergency_contact">Emergency Contact Number
                                 <span class="text-danger">*</span></label>
                             <input type="text" name="emergency_contact" id="emergency_contact"
-                                aria-describedby="emergency_contactError" required placeholder="99999-99999" />
+                                aria-describedby="emergency_contactError" required placeholder="99999-99999" class="form-control" value="9874563210"/>
                             <div id="emergency_contactError" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -214,7 +214,7 @@
 
                     <!-- Optional Add-ons  Final Working -->
                     <div class="my-1">
-                        <label class="form-label fs-4">Optional Add-on Accessories</label>
+                        <label class="form-label fs-5">Optional Add-on Accessories</label>
                         <div class="border rounded p-3 bg-light d-flex flex-wrap gap-4" id="additional-accessories">
                             <div v-for="acc in additionalAccessories" :key="acc.id"
                                 class="form-check border rounded p-3 mb-2 bg-white shadow-sm flex-grow-1 d-flex align-items-center"
@@ -360,7 +360,7 @@
                     </div>
 
                     <!-- Agreement -->
-                    <div class="form-check">
+                    <div class="form-check my-2">
                         <input class="form-check-input fs-4 fw-semibold" type="checkbox" id="agree" name="agree" />
                         <label class="form-check-label fs-4" for="agree">
                             I agree to the terms and conditions
@@ -647,8 +647,8 @@ onMounted(() => {
                 if (courses.length) {
                     courses.forEach((c) => {
                         const opt = document.createElement("option");
-                        // opt.value = c.id;
-                        opt.value = c.name;
+                        opt.value = c.id;
+                        // opt.value = c.name;
                         opt.textContent = c.name;
                         courseSelect.appendChild(opt);
                     });

@@ -14,7 +14,7 @@ class CreateGuestsTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('gender');
-            $table->string('scholar_no')->unique();
+            $table->string('scholar_number')->unique();
             $table->string('fathers_name');
             $table->string('mothers_name');
             $table->unsignedTinyInteger('months')->default(3)->comment('Duration of stay in months');
@@ -24,7 +24,7 @@ class CreateGuestsTable extends Migration
             $table->text('remarks')->nullable();
             $table->text('admin_remarks')->nullable();
             $table->boolean('fee_waiver')->default(false);
-            $table->string('emergency_no');
+            $table->string('emergency_contact');
             $table->string('number')->nullable();
             $table->string('parent_no')->nullable();
             $table->string('guardian_no')->nullable();

@@ -28,7 +28,7 @@ class AccessoryController extends Controller
     public function createOrUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'accessory_head_id' => 'required|exists:accessory_heads,id',
+            'accessories_heads_id' => 'required|exists:accessory_heads,id',
             'price' => 'required|numeric',
             'is_default' => 'nullable|boolean',
         ]);        
@@ -40,7 +40,7 @@ class AccessoryController extends Controller
         $today = Carbon::today();
 
         try {
-            $existing = Accessory::where('accessory_head_id', $request->accessory_head_id)
+            $existing = Accessory::where('accessories_heads_id', $request->accessory_head_id)
                 ->where('is_active', true)
                 ->first();
 
@@ -61,7 +61,7 @@ class AccessoryController extends Controller
             }
 
             $newAccessory = Accessory::create([
-                'accessory_head_id' => $request->accessory_head_id,
+                'accessories_heads_id' => $request->accessory_head_id,
                 'price' => $request->price,
                 'is_default' => $request->is_default ?? false,
                 'from_date' => $today,
@@ -99,6 +99,7 @@ class AccessoryController extends Controller
     // Only for guest
     public function guestActiveAccessories(Request $request)
     {
+        Log::info('request', $request->all());
         try {
             $user = Helper::get_auth_guest_user($request);
             // Log::info('guests', $user);
@@ -108,6 +109,14 @@ class AccessoryController extends Controller
                     $q->where('university_id', $user->faculty->university_id);
                 })
                 ->get();
+            // $universityId = optional($user->faculty)->university_id;
+
+            // $activeAccessories = Accessory::with('accessoryHead')
+            //     ->where('is_active', true)
+            //     ->whereHas('accessoryHead', function ($q) use ($universityId) {
+            //         $q->where('university_id', $universityId);
+            //     })
+            //     ->get();
                 // Log::info("Active Accessories fetched: " . json_encode($activeAccessories));
             return $this->apiResponse(true, 'Active accessories fetched successfully.', $activeAccessories);
         } catch (Exception $e) {

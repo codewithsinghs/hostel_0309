@@ -150,7 +150,7 @@ use App\Helpers\Helper; // Import the Helper class for utility
 
 //             $data = [
 //                 'resident_name' => $user->name ?? null,
-//                 'scholar_no' => $guest->scholar_no ?? null,
+//                 'scholar_number' => $guest->scholar_number ?? null,
 //                 'from_date' => $leaveRequest->from_date,
 //                 'to_date' => $leaveRequest->to_date,
 //                 'reason' => $leaveRequest->reason,
@@ -380,7 +380,7 @@ class LeaveRequestController extends Controller
 
             $data = [
                 'resident_name' => $user->name ?? null,
-                'scholar_no' => $guest->scholar_no ?? null,
+                'scholar_number' => $guest->scholar_number ?? null,
                 'from_date' => $leaveRequest->from_date,
                 'to_date' => $leaveRequest->to_date,
                 'reason' => $leaveRequest->reason,

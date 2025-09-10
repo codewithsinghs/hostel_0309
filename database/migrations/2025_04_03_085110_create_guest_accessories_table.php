@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('guest_accessory', function (Blueprint $table) {
+        Schema::create('guest_accessories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('guest_id')->constrained('guests')->onDelete('cascade');
-            $table->foreignId('accessory_head_id')->constrained('accessories')->onDelete('cascade');
+            $table->foreignId('accessory_id')->constrained('accessories')->onDelete('cascade');
+                // $table->foreignId('accessories_heads_id')->constrained('accessory_heads')->onDelete('cascade');
             $table->decimal('price', 10, 2); // Price per unit
             $table->decimal('total_amount', 10, 2); // Total amount for the accessory
             $table->date('from_date'); // Start date of accessory usage

@@ -87,7 +87,7 @@
 
             residentSelect.html('<option value="">Select Resident</option>');
             residentData.data.forEach(res => {
-                residentSelect.append(`<option value="${res.id}">${res.name} (${res.scholar_no})</option>`);
+                residentSelect.append(`<option value="${res.id}">${res.name} (${res.scholar_number})</option>`);
             });
 
             residentSelect.select2({

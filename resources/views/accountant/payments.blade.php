@@ -18,8 +18,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="scholar_no" class="form-label">Scholar Number</label>
-            <input type="text" id="scholar_no" class="form-control" readonly />
+            <label for="scholar_number" class="form-label">Scholar Number</label>
+            <input type="text" id="scholar_number" class="form-control" readonly />
         </div>
 
         <div class="mb-3">
@@ -81,7 +81,7 @@ $(document).ready(function () {
                 return {
                     results: (data.residents || []).map(r => ({
                         id: r.id,
-                        text: `${r.name} (${r.scholar_no})`,
+                        text: `${r.name} (${r.scholar_number})`,
                         extra: r
                     }))
                 };
@@ -121,14 +121,14 @@ $(document).ready(function () {
     $('#resident_id').on('select2:select', function(e) {
         const selectedData = e.params.data;
         $('#resident_name').val(selectedData.extra.name || '');
-        $('#scholar_no').val(selectedData.extra.scholar_no || '');
+        $('#scholar_number').val(selectedData.extra.scholar_number || '');
         loadSubscriptions(selectedData.id);
     });
 
-    // Clear name, scholar_no, and subscriptions on clear
+    // Clear name, scholar_number, and subscriptions on clear
     $('#resident_id').on('select2:clear', function() {
         $('#resident_name').val('');
-        $('#scholar_no').val('');
+        $('#scholar_number').val('');
         $('#subscription_id').empty().append('<option value="">-- Select Subscription --</option>');
     });
 
@@ -140,11 +140,11 @@ $(document).ready(function () {
             success: function(data) {
                 const resident = data.residents.find(r => r.id == residentIdFromUrl);
                 if (resident) {
-                    const option = new Option(`${resident.name} (${resident.scholar_no})`, resident.id, true, true);
+                    const option = new Option(`${resident.name} (${resident.scholar_number})`, resident.id, true, true);
                     $('#resident_id').append(option).trigger('change');
 
                     $('#resident_name').val(resident.name);
-                    $('#scholar_no').val(resident.scholar_no);
+                    $('#scholar_number').val(resident.scholar_number);
                     loadSubscriptions(resident.id);
                 }
             }
@@ -177,7 +177,7 @@ $(document).ready(function () {
                 $('#payment-form')[0].reset();
                 $('#resident_id').val(null).trigger('change');
                 $('#resident_name').val('');
-                $('#scholar_no').val('');
+                $('#scholar_number').val('');
                 $('#subscription_id').empty().append('<option value="">-- Select Subscription --</option>');
             },
             error: function(xhr) {

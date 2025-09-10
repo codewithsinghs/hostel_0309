@@ -228,7 +228,7 @@
                         guestList.innerHTML += `
                             <tr id="guest-${guest.id}">
                                 <td>${index + 1}</td> {{-- Displaying Serial No --}}
-                                <td>${guest.scholar_no || 'N/A'}</td>
+                                <td>${guest.scholar_number || 'N/A'}</td>
                                 <td>${guest.name || '-'}</td>
                                 <td>${feeWaiverStatus}</td>
                                 <td>${remarksContent}</td>

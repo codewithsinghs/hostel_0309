@@ -21,8 +21,8 @@
 
         {{-- Scholar Number (visible) --}}
         <div class="mb-3">
-            <label for="scholar_no" class="form-label">Scholar Number</label>
-            <input type="text" id="scholar_no" class="form-control" readonly />
+            <label for="scholar_number" class="form-label">Scholar Number</label>
+            <input type="text" id="scholar_number" class="form-control" readonly />
         </div>
 
         {{-- Subscription ID field - now hidden --}}
@@ -109,7 +109,7 @@
                     return {
                         results: (response.data || []).map(r => ({ // Access 'response.data' here
                             id: r.id,
-                            text: `${r.name} (${r.scholar_no})`,
+                            text: `${r.name} (${r.scholar_number})`,
                             extra: r // Store the full resident object for later use
                         }))
                     };
@@ -186,7 +186,7 @@
             const selectedData = e.params.data;
             // Populate name and scholar number fields
             $('#resident_name').val(selectedData.extra.name || '');
-            $('#scholar_no').val(selectedData.extra.scholar_no || '');
+            $('#scholar_number').val(selectedData.extra.scholar_number || '');
             // Load subscriptions for the selected resident. Pass URL subscription ID.
             loadSubscriptions(selectedData.id, getQueryParam('subscription_id'));
         });
@@ -194,7 +194,7 @@
         // Event listener for when the resident selection is cleared
         $('#resident_id').on('select2:clear', function() {
             $('#resident_name').val('');
-            $('#scholar_no').val('');
+            $('#scholar_number').val('');
             $('#subscription_id').empty().append('<option value="">-- Select Subscription --</option>');
             $('#amount').val(''); // Clear amount when resident is cleared
         });
@@ -227,16 +227,16 @@
                     'token': localStorage.getItem('token'),
                     'auth-id': localStorage.getItem('auth-id')
                 },  
-                // Alternatively, if your API only supports 'search' for name/scholar_no:
+                // Alternatively, if your API only supports 'search' for name/scholar_number:
                 // url: `/api/residents?search=${residentIdFromUrl}`,
                 success: function(response) { // Changed 'data' to 'response'
                     const resident = (response.data || []).find(r => r.id == residentIdFromUrl); // Access 'response.data'
                     if (resident) {
-                        const option = new Option(`${resident.name} (${resident.scholar_no})`, resident.id, true, true);
+                        const option = new Option(`${resident.name} (${resident.scholar_number})`, resident.id, true, true);
                         $('#resident_id').append(option).trigger('change'); // Add option and trigger change for Select2
 
                         $('#resident_name').val(resident.name);
-                        $('#scholar_no').val(resident.scholar_no);
+                        $('#scholar_number').val(resident.scholar_number);
                         // Load subscriptions for the preselected resident, and attempt to pre-select from URL
                         loadSubscriptions(resident.id, subscriptionIdFromUrl);
                     } else {
@@ -300,7 +300,7 @@
                     $('#payment-form')[0].reset();
                     $('#resident_id').val(null).trigger('change'); // Clear Select2 selection
                     $('#resident_name').val('');
-                    $('#scholar_no').val('');
+                    $('#scholar_number').val('');
                     $('#subscription_id').empty().append('<option value="">-- Select Subscription --</option>');
                     $('#amount').val(''); // Reset amount field
                     // Generate a new transaction ID for the next potential payment

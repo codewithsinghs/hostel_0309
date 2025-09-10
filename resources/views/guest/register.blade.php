@@ -94,8 +94,8 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="scholar_no" class="form-label">Scholar Number *</label>
-                    <input type="text" name="scholar_no" id="scholar_no" class="form-control" pattern="[a-zA-Z0-9]+" title="Scholar number must contain only letters and digits." required>
+                    <label for="scholar_number" class="form-label">Scholar Number *</label>
+                    <input type="text" name="scholar_number" id="scholar_number" class="form-control" pattern="[a-zA-Z0-9]+" title="Scholar number must contain only letters and digits." required>
                     <div id="scholarNoError" class="invalid-feedback"></div>
                 </div>
                 <div class="col-md-6">
@@ -157,8 +157,8 @@
                     <div id="localGuardianNameError" class="invalid-feedback"></div>
                 </div>
                 <div class="col-md-6">
-                    <label for="emergency_no" class="form-label">Emergency Contact Number *</label>
-                    <input type="text" name="emergency_no" id="emergency_no" class="form-control" pattern="[0-9]{10}" required>
+                    <label for="emergency_contact" class="form-label">Emergency Contact Number *</label>
+                    <input type="text" name="emergency_contact" id="emergency_contact" class="form-control" pattern="[0-9]{10}" required>
                     <div id="emergencyNoError" class="invalid-feedback"></div>
                 </div>
                 <div class="col-md-6">

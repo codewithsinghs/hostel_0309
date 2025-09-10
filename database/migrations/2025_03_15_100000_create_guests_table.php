@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateGuestsTable extends Migration
 {
-
     public function up()
     {
         Schema::create('guests', function (Blueprint $table) {
@@ -45,6 +44,8 @@ class CreateGuestsTable extends Migration
             $table->string('payment_status')->default('pending')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_verified')->default(false);
+            $table->boolean('bihar_credit_card')->default(false);
+            $table->boolean('tnsd')->default(false);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });

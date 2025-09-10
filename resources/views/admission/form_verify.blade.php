@@ -103,8 +103,8 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label for="scholar_no" class="form-label">Scholar Number *</label>
-                        <input type="text" name="scholar_no" id="scholar_no" class="form-control" pattern="[a-zA-Z0-9]+"
+                        <label for="scholar_number" class="form-label">Scholar Number *</label>
+                        <input type="text" name="scholar_number" id="scholar_number" class="form-control" pattern="[a-zA-Z0-9]+"
                             title="Scholar number must contain only letters and digits." required>
                         <div id="scholarNoError" class="invalid-feedback"></div>
                     </div>
@@ -184,8 +184,8 @@
                         <div id="localGuardianNameError" class="invalid-feedback"></div>
                     </div>
                     <div class="col-md-6">
-                        <label for="emergency_no" class="form-label">Emergency Contact Number *</label>
-                        <input type="text" name="emergency_no" id="emergency_no" class="form-control"
+                        <label for="emergency_contact" class="form-label">Emergency Contact Number *</label>
+                        <input type="text" name="emergency_contact" id="emergency_contact" class="form-control"
                             pattern="[0-9]{10}" required>
                         <div id="emergencyNoError" class="invalid-feedback"></div>
                     </div>
@@ -553,7 +553,7 @@
                         $('#email').val(guest.email);
                         $('#faculty_id').val(guest.faculty_id);
                         $('#department_id').val(guest.department_id);
-                        $('#scholar_no').val(guest.scholar_no);
+                        $('#scholar_number').val(guest.scholar_number);
                         $('#gender').val(guest.gender);
                         guest.fee_waiver == 1 ? $('#fee_waiver').prop('checked', true) : 'N/A';
                         guest.bihar_credit_card == 1 ? $('#bihar_credit_card').prop('checked', true) :
@@ -639,7 +639,7 @@
                                 $("#room_triple").prop("checked", true);
                                 break;
                         }
-                        $('#emergency_no').val(guest.emergency_no);
+                        $('#emergency_contact').val(guest.emergency_contact);
                         $('#number').val(guest.number);
                         $('#parent_no').val(guest.parent_no);
                         $('#guardian_no').val(guest.guardian_no);
